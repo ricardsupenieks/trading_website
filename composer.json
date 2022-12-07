@@ -6,6 +6,9 @@
     },
 
     "require": {
-        "nesbot/carbon": "^2.64"
+        "nesbot/carbon": "^2.64",
+        "twig/twig": "^3.0",
+        "vlucas/phpdotenv": "^5.5",
+        "nikic/fast-route": "^1.3"
     }
 }
