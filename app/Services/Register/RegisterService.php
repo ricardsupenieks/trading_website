@@ -3,7 +3,7 @@
 namespace App\Services\Register;
 
 use App\Models\User\UserModel;
-use App\Repositories\User\UserRepository;
+use App\Repositories\User\DatabaseUserRepository;
 use App\Validation\RegisterValidation;
 
 class RegisterService
@@ -26,7 +26,7 @@ class RegisterService
         );
 
         if ($validation->success()) {
-            $userRepository = new UserRepository($this->user);
+            $userRepository = new DatabaseUserRepository($this->user);
             $userRepository->storeUser();
             return true;
         }

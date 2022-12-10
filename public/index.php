@@ -3,8 +3,8 @@
 
 use App\Controllers\LoginController;
 use App\Controllers\LogoutController;
-use App\Controllers\MainPageController;
 use App\Controllers\RegisterController;
+use App\Controllers\StocksController;
 use App\Redirect;
 use App\Template;
 use App\ViewVariables\ViewErrorVariables;
@@ -35,7 +35,9 @@ foreach ($viewVariables as $variable) {
 }
 
 $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
-    $r->addRoute('GET', '/', [MainPageController::class, 'index']);
+    $r->addRoute('GET', '/', [StocksController::class, 'index']);
+
+    $r->addRoute('GET', '/main', [StocksController::class, 'execute']);
 
     $r->addRoute('GET', '/sign-in', [LoginController::class, 'showForm']);
     $r->addRoute('POST', '/sign-in', [LoginController::class, 'execute']);
@@ -85,7 +87,5 @@ switch ($routeInfo[0]) {
         if ($response instanceof Redirect) {
             header('Location: ' . $response->getUrl());
         }
-
-
         break;
 }

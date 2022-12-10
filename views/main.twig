@@ -13,6 +13,14 @@
 
     {% if user.id is same as (null) %}
         <h1><a href="/sign-in">Sign in</a></h1>
+    {% else %}
+        {% for stock in stocks %}
+            {{ stock.symbol }}
+            {{ stock.name }}
+            ${{ stock.price|number_format(2) }}
+            {{ stock.priceChange|number_format(2) }}
+            <br>
+        {% endfor %}
     {% endif %}
 </body>
 </html>

@@ -2,7 +2,7 @@
 
 namespace App\Models\User;
 
-class UserModel implements UserInterface
+class UserModel
 {
     private ?int $id;
     private ?string $name;
