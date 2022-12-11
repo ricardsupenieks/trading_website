@@ -2,7 +2,7 @@
 
 namespace App\ViewVariables;
 
-class ViewErrorVariables
+class ViewErrorVariables implements ViewVariables
 {
     public function getName(): string
     {

@@ -3,19 +3,29 @@
 namespace App\Services\Stock;
 
 use App\Models\Collections\StockCollection;
+use App\Models\Stock\StockModel;
 use App\Repositories\Stocks\ApiStocksRepository;
 
 
 class StockService
 {
-    public function execute(array $stockSymbols): StockCollection
+    public function __construct()
+    {
+        $this->stockRepository = new ApiStocksRepository();
+    }
+
+    public function getAllStocks(array $stockSymbols): StockCollection
     {
         $stocks = [];
         foreach ($stockSymbols as $stockSymbol) {
-            $stockRepository = new ApiStocksRepository();
-            $stocks []= $stockRepository->getStock($stockSymbol);
+            $stocks []= $this->stockRepository->getStock($stockSymbol);
         }
         $stockCollection = new StockCollection($stocks);
         return $stockCollection;
+    }
+
+    public function getStock(string $stockSymbol): StockModel
+    {
+        return $this->stockRepository->getStock($stockSymbol);
     }
 }

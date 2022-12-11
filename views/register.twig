@@ -1,31 +1,31 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Register</title>
-</head>
-<body>
-    {% include "navigation.twig" %}
+{% extends 'navigation.twig' %}
 
-    <form action="/register" method="post">
-        <input type="text" name="name" id="name" placeholder="Name" required>
-
-        <input type="email" name="email" id="email" placeholder="E-mail" required>
-
-        <input type="password" name="password" id="password" placeholder="Password" required>
-
-        <input type="password" name="password_repeat" id="password_repeat" placeholder="Repeat password" required>
-
-        <input type="submit" id="submit" value="Submit">
-    </form>
-    {% if errors.emailTaken is same as(true) %}
-        E-mail taken <br>
-    {% endif %}
-    {% if errors.passwordsMatch is same as(false) %}
-        Passwords dont match <br>
-    {% endif %}
-</body>
-</html>
+{% block content %}
+    <div class="flex items-center justify-center h-screen bg-gray-200">
+<form action="/register" method="post" class="w-full max-w-sm">
+    <div class="flex items-center border-b border-b-2 border-teal-500 py-2">
+        <input class="appearance-none bg-transparent border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none" type="text" name="name" id="name" placeholder="Name" required>
+        <i class="fa fa-user text-gray-500"></i>
+    </div>
+    <div class="flex items-center border-b border-b-2 border-teal-500 py-2">
+        <input class="appearance-none bg-transparent border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none" type="email" name="email" id="email" placeholder="E-mail" required>
+        <i class="fa fa-envelope text-gray-500"></i>
+    </div>
+    <div class="flex items-center border-b border-b-2 border-teal-500 py-2">
+        <input class="appearance-none bg-transparent border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none" type="password" name="password" id="password" placeholder="Password" required>
+        <i class="fa fa-lock text-gray-500"></i>
+    </div>
+    <div class="flex items-center border-b border-b-2 border-teal-500 py-2">
+        <input class="appearance-none bg-transparent border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none" type="password" name="password_repeat" id="password_repeat" placeholder="Repeat password" required>
+        <i class="fa fa-lock text-gray-500"></i>
+    </div>
+    <div class="flex items-center justify-between mt-8">
+        <input type="submit" id="submit" value="Submit" class="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline-teal">
+        {% if errors.emailTaken is same as(true) %}
+            <p class="text-red-500 text-xs italic">E-mail taken</p>
+        {% endif %}
+        {% if errors.passwordsMatch is same as(false) %}
+            <p class="text-red-500 text-xs italic">Passwords don't match</p>
+        {% endif %}
+    </div>
+{% endblock %}

@@ -1,24 +1,23 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="styles/login.css">
-    <title>Sign in</title>
-</head>
-<body>
-    {% include "navigation.twig" %}
+{% extends 'navigation.twig' %}
 
-    <form action="/sign-in" method="post">
-        <input type="text" name="email" id="email" placeholder="E-mail" required>
-
-        <input type="password" name="password" id="password" placeholder="Password" required>
-
-        <input type="submit" id="submit" value="Submit">
+{% block content %}
+    <div class="flex items-center justify-center h-screen bg-gray-200">
+    <form action="/sign-in" method="post" class="w-full max-w-sm">
+        <div class="flex items-center border-b border-b-2 border-teal-500 py-2">
+            <input class="appearance-none bg-transparent border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none" type="text" name="email" id="email" placeholder="E-mail" required>
+            <i class="fa fa-envelope text-gray-500"></i>
+        </div>
+        <div class="flex items-center border-b border-b-2 border-teal-500 py-2">
+            <input class="appearance-none bg-transparent border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none" type="password" name="password" id="password" placeholder="Password" required>
+            <i class="fa fa-lock text-gray-500"></i>
+        </div>
+        <div class="flex items-center justify-between mt-8">
+            <input type="submit" id="submit" value="Submit" class="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline-teal">
+            {% if errors.userCredentials is same as (false)%}
+                <p class="text-red-500 text-xs italic">Incorrect Credentials</p>
+            {% endif %}
+        </div>
     </form>
-    {% if errors.userCredentials is same as (false)%} Incorrect Credentials {% endif %}
-    <div class="register"><a href="/register">Register</a></div>
-</body>
-</html>
+    <div class="register mt-8"><a href="/register" class="text-teal-500 hover:text-teal-800 font-bold">Register</a></div>
+    </div>
+{% endblock %}

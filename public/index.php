@@ -1,11 +1,12 @@
 <?php
-// lapa, kura var - logins/registracija, redzet 10 user izveletus stockus, cenas izmaina
+// iespeja iegadaties stocku
 
 use App\Controllers\LoginController;
 use App\Controllers\LogoutController;
 use App\Controllers\RegisterController;
 use App\Controllers\StocksController;
 use App\Redirect;
+use App\Session;
 use App\Template;
 use App\ViewVariables\ViewErrorVariables;
 use App\ViewVariables\ViewUserVariables;
@@ -15,7 +16,7 @@ use Twig\Loader\FilesystemLoader;
 
 require '../vendor/autoload.php';
 
-session_start();
+Session::start();
 
 $dotenv = Dotenv\Dotenv::createImmutable('/home/ricards/PhpstormProjects/untitled/');
 $dotenv->load();
@@ -36,8 +37,8 @@ foreach ($viewVariables as $variable) {
 
 $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     $r->addRoute('GET', '/', [StocksController::class, 'index']);
-
-    $r->addRoute('GET', '/main', [StocksController::class, 'execute']);
+    $r->addRoute('GET', '/search', [StocksController::class, 'search']);
+    $r->addRoute('GET', '/add', [StocksController::class, 'add']);
 
     $r->addRoute('GET', '/sign-in', [LoginController::class, 'showForm']);
     $r->addRoute('POST', '/sign-in', [LoginController::class, 'execute']);
@@ -46,7 +47,6 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     $r->addRoute('POST', '/register', [RegisterController::class, 'execute']);
 
     $r->addRoute('GET', '/logout', [LogoutController::class, 'execute']);
-
 
 });
 
@@ -59,7 +59,6 @@ if (false !== $pos = strpos($uri, '?')) {
     $uri = substr($uri, 0, $pos);
 }
 $uri = rawurldecode($uri);
-
 $routeInfo = $dispatcher->dispatch($httpMethod, $uri);
 switch ($routeInfo[0]) {
     case FastRoute\Dispatcher::NOT_FOUND:

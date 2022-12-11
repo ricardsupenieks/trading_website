@@ -20,6 +20,8 @@ class LoginController
 
         $loginService = new LoginService($userCredentials);
 
+        unset($_SESSION['symbols']);
+
         if ($loginService->complete()) {
             return new Redirect('/');
         }

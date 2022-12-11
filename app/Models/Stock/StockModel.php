@@ -6,10 +6,10 @@ class StockModel
 {
     private string $symbol;
     private string $name;
-    private float $price;
-    private float $priceChange;
+    private ?float $price;
+    private ?float $priceChange;
 
-    public function __construct(string $symbol, string $name, float $price, float $priceChange)
+    public function __construct(string $symbol, string $name, ?float $price = null, ?float $priceChange = null)
     {
         $this->symbol = $symbol;
         $this->name = $name;
@@ -28,12 +28,12 @@ class StockModel
         return $this->name;
     }
 
-    public function getPrice(): float
+    public function getPrice(): ?float
     {
         return $this->price;
     }
 
-    public function getPriceChange(): float
+    public function getPriceChange(): ?float
     {
         return $this->priceChange;
     }
