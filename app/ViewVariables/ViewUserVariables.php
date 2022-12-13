@@ -25,10 +25,16 @@ class ViewUserVariables implements ViewVariables
             ->setParameter(0, $_SESSION['user'])
             ->fetchAssociative();
 
+        $money = "0.00";
+        if ($user['money'] !== null) {
+            $money = $user['money'];
+        }
+
         return [
             "id" => $user['id'],
             "name" => $user['name'],
             "email" => $user['email'],
+            "money" => $money,
         ];
     }
 }

@@ -2,8 +2,7 @@
 
 namespace App\Controllers;
 
-use App\Models\Stock\StockModel;
-use App\Models\User\UserModel;
+use App\Database;
 use App\Redirect;
 use App\Services\Stock\StockService;
 use App\Session;
@@ -14,29 +13,67 @@ class StocksController
 {
     public function index(): Template
     {
-        $stockService = new StockService();
-        $stocks = $stockService->getAllStocks($_SESSION['symbols'] ?? []);
-
-        return new Template('main.twig', ['stocks' => $stocks->getStocks()]);
+        return new Template('main.twig');
     }
 
 
     public function search(): Template
     {
-        Session::store('search', $_GET['search']);
+        Session::store('searchTerm', $_GET['query']);
         $stockService = new StockService();
-        $stock = $stockService->getStock($_SESSION['search']);
+        if ($_SESSION['searchTerm'] !== null) {
+            $stock = $stockService->getStock($_SESSION['searchTerm']);
+        } else {
+            $stock = $stockService->getStock($_SESSION['search']);
+        }
+        Session::store('search', $_SESSION['searchTerm']);
+        if ($stock->getPrice() == 0 && $stock->getPriceChange() == null) {
+            $failed = true;
 
-        return new Template('main.twig', ['result' => $stock]);
+            return new Template('search.twig', ['failed' => $failed]);
+        }
+
+        return new Template('search.twig', ['result' => $stock]);
     }
 
 
     public function add(): Redirect
     {
         $stockService = new StockService();
-        $add = $stockService->getStock($_SESSION['search']);
-        Session::storeInArray('symbols', $add->getSymbol());
-        unset($_SESSION['search']);
+
+        $stock = $stockService->getStock($_SESSION['search']);
+
+        $_SESSION['priceChange'] = $stock->getPriceChange();
+        $_SESSION['currentPrice'] = $stock->getPrice();
+
+        $connection = Database::getConnection();
+
+        $queryBuilder = $connection->createQueryBuilder();
+
+        $funds = $queryBuilder
+            ->select('money')
+            ->from('users')
+            ->where('id = ?')
+            ->setParameter(0, $_SESSION['user'])
+            ->fetchOne();
+
+        $totalFunds = floatval($funds) - floatval($stock->getPrice()) * (int)$_POST['amount'];
+
+        if($totalFunds < 0) {
+            $_SESSION['errors']['insufficientFunds'] = true;
+
+            return new Redirect('/search');
+        }
+
+        $connection->update('`stocks-api`.users', ['money' => $totalFunds], ['id' => $_SESSION['user']]);
+
+        $connection->insert('`stocks-api`.stocks', [
+            'symbol' => $stock->getSymbol(),
+            'name' => $stock->getName(),
+            'amount' => $_POST['amount'],
+            'price' => $stock->getPrice(),
+            'owner_id' => $_SESSION['user'],
+        ]);
 
         return new Redirect('/');
     }

@@ -1,17 +1,22 @@
 <?php
-// iespeja iegadaties stocku
+// visu stocku apkopojums ar cenu izmainu, taja bridi kad perk jaizveido ari transakcija
 
+use App\Controllers\InspectStockController;
+use App\Controllers\FundsController;
 use App\Controllers\LoginController;
 use App\Controllers\LogoutController;
+use App\Controllers\ProfileController;
 use App\Controllers\RegisterController;
 use App\Controllers\StocksController;
 use App\Redirect;
 use App\Session;
 use App\Template;
 use App\ViewVariables\ViewErrorVariables;
+use App\ViewVariables\ViewStockVariables;
 use App\ViewVariables\ViewUserVariables;
 use App\ViewVariables\ViewVariables;
 use Twig\Environment;
+use Twig\Extension\DebugExtension;
 use Twig\Loader\FilesystemLoader;
 
 require '../vendor/autoload.php';
@@ -22,11 +27,15 @@ $dotenv = Dotenv\Dotenv::createImmutable('/home/ricards/PhpstormProjects/untitle
 $dotenv->load();
 
 $loader = new FilesystemLoader('../views');
-$twig = new Environment($loader);
+$twig = new Environment($loader, [
+    'debug' => true]);
+$twig->addExtension(new DebugExtension());
+
 
 $viewVariables = [
     ViewUserVariables::class,
     ViewErrorVariables::class,
+    ViewStockVariables::class,
 ];
 
 foreach ($viewVariables as $variable) {
@@ -38,7 +47,15 @@ foreach ($viewVariables as $variable) {
 $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     $r->addRoute('GET', '/', [StocksController::class, 'index']);
     $r->addRoute('GET', '/search', [StocksController::class, 'search']);
-    $r->addRoute('GET', '/add', [StocksController::class, 'add']);
+    $r->addRoute('POST', '/add', [StocksController::class, 'add']);
+
+    $r->addRoute('GET', '/inspect', [InspectStockController::class, 'index']);
+    $r->addRoute('POST', '/inspect', [InspectStockController::class, 'execute']);
+
+
+    $r->addRoute('GET', '/profile', [ProfileController::class, 'showForm']);
+
+    $r->addRoute('POST', '/wallet', [FundsController::class, 'depositWithdraw']);
 
     $r->addRoute('GET', '/sign-in', [LoginController::class, 'showForm']);
     $r->addRoute('POST', '/sign-in', [LoginController::class, 'execute']);
@@ -81,6 +98,7 @@ switch ($routeInfo[0]) {
             echo $twig->render($response->getPath(), $response->getParams());
 
             unset($_SESSION['errors']);
+            unset($_SESSION['searchTerm']);
         }
 
         if ($response instanceof Redirect) {

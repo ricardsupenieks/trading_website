@@ -1,0 +1,46 @@
+{% extends 'navigation.twig' %}
+
+{% block content %}
+
+    <h1 class="centered font-semibold text-lg">Search</h1>
+    {% if failed %}
+        <h1 class="centered text-5xl font-bold text-gray-800 mt-12">Cannot buy this stock</h1>
+    {% else %}
+    <table class="table- w-full">
+    <thead>
+    <tr>
+        <th class="px-4 py-2 bg-gray-300 text-gray-800 font-bold">SYMBOL</th>
+        <th class="px-4 py-2 bg-gray-300 text-gray-800 font-bold">NAME</th>
+        <th class="px-4 py-2 bg-gray-300 text-gray-800 font-bold">PRICE</th>
+        <th class="px-4 py-2 bg-gray-300 text-gray-800 font-bold">PRICE CHANGE</th>
+    </tr>
+    </thead>
+    <tbody>
+<tr>
+    <td class="border px-4 py-2">{{ result.getSymbol }}</td>
+    <td class="border px-4 py-2">{{ result.name }}</td>
+    <td class="border px-4 py-2">${{ result.price}}</td>
+    <td class="border px-4 py-2">
+        {% if result.priceChange > 0 %}
+            <span class="text-green-700">+{{ result.priceChange }}</span>
+        {% elseif result.priceChange < 0 %}
+            <span class="text-red-700">{{ result.priceChange }}</span>
+        {% else %}
+            {{ result.priceChange }}
+        {% endif %}
+    </td>
+    </tbody>
+    </table>
+    {% if user %}
+        <form action="/add" method="post">
+            <input type="hidden" name="search">
+            <input type="text" name="amount" id="amount" placeholder="Enter amount">
+            <input type="submit" name="submit" id="submit" value="buy" class="bg-teal-500 hover:bg-teal-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline-teal">
+
+        </form>
+    {% endif %}
+    {% if errors.insufficientFunds %}
+        Insufficient funds
+    {% endif %}
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends 'navigation.twig' %}
+
+{% block content %}
+    <a href="/" class="m-4 text-xl">Back</a>
+    <div class="container mx-auto mt-10">
+    <h1 class="text-3xl font-bold text-center my-4">{{ stock.name }} ( {{ stock.symbol}} )</h1>
+    <table class="table- w-full">
+        <thead>
+        <tr>
+            <th class="px-4 py-2 bg-gray-300 text-gray-800 font-bold">Bought for</th>
+            <th class="px-4 py-2 bg-gray-300 text-gray-800 font-bold">Amount</th>
+            <th class="px-4 py-2 bg-gray-300 text-gray-800 font-bold">Current price</th>
+            <th class="px-4 py-2 bg-gray-300 text-gray-800 font-bold">Previous price</th>
+            <th class="px-4 py-2 bg-gray-300 text-gray-800 font-bold">Price change</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td class="border px-4 py-2">${{ userStock.price }}</td>
+            <td class="border px-4 py-2">{{ userStock.amount }}</td>
+            <td class="border px-4 py-2">{{ stock.price}}</td>
+            <td class="border px-4 py-2">{{ stock.highPrice }}</td>
+            <td class="border px-4 py-2">
+                {% if stock.getPriceChange > 0 %}
+                    <span class="text-green-700">+{{ stock.priceChange }}%</span>
+                {% elseif stock.priceChange < 0 %}
+                    <span class="text-red-700">{{ stock.priceChange }}%</span>
+                {% else %}
+                    {{ stock.priceChange }}%
+                {% endif %}
+            </td>
+        </tbody>
+    </table>
+    <form action="/inspect" method="post">
+        <label for="deposit" class="text-xl font-bold mb-4 inline" >Buy: </label>
+        <input type="text" id="buy" name="buy" placeholder="amount">
+        <br>
+        <label for="withdraw" class="text-xl font-bold mb-4 inline" >Sell: </label>
+        <input type="text" id="sell" name="sell" placeholder="amount">
+        <br>
+        <input type="submit" id="submit" value="Submit" class="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline-teal">
+    </form>
+
+    {% if errors.insufficientFunds %}
+        Insufficient funds
+    {% endif %}
+
+{% endblock %}

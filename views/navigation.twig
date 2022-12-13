@@ -7,6 +7,11 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <title>WallSt.</title>
 </head>
+<style>
+    .centered {
+        text-align: center;
+    }
+</style>
 <body>
 <a id="top"></a>
 <header>
@@ -14,8 +19,15 @@
         <div class="flex justify-between h-16 px-10 shadow items-center">
             <h1 class="text-xl lg:text-3xl font-bold"><a href="/">WallSt.</a></h1>
             {% if user %}
+            <p class="text-gray-800 font-semibold ml-10">Welcome, {{ user.name }}</p>
+            <p class="text-gray-800 font-semibold ml-10">Funds: {{ user.money }}$</p>
+            {% endif %}
+            <form action="/search" method="get" class="w-full max-w-sm mx-auto my-8">
+                <input type="text" name="query" id="query" placeholder="Search for a stock" required class="appearance-none bg-transparent border-2 border-teal-500 w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:border-teal-700">
+            </form>
+            {% if user %}
                 <div class="flex items-center space-x-4">
-                    <p class="text-gray-800 font-semibold">Welcome, {{ user.name }}</p>
+                    <a href="/profile" class="text-gray-800 font-semibold hover:text-sky-600">PROFILE</a>
                     <a href="/logout" class="text-gray-800 font-semibold hover:text-sky-600">LOGOUT</a>
                 </div>
             {% else %}

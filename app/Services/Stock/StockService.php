@@ -14,16 +14,6 @@ class StockService
         $this->stockRepository = new ApiStocksRepository();
     }
 
-    public function getAllStocks(array $stockSymbols): StockCollection
-    {
-        $stocks = [];
-        foreach ($stockSymbols as $stockSymbol) {
-            $stocks []= $this->stockRepository->getStock($stockSymbol);
-        }
-        $stockCollection = new StockCollection($stocks);
-        return $stockCollection;
-    }
-
     public function getStock(string $stockSymbol): StockModel
     {
         return $this->stockRepository->getStock($stockSymbol);

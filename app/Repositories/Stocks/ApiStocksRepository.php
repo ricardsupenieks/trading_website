@@ -25,8 +25,9 @@ class ApiStocksRepository
     {
             $stockName = json_decode($this->client->symbolSearch($stockSymbol)->toHeaderValue(), true)["result"][0]["description"];
             $stockPrice = json_decode($this->client->quote($stockSymbol)->toHeaderValue(), true)["c"];
-            $stockPriceChange = json_decode($this->client->quote($stockSymbol)->toHeaderValue(), true)["d"];
+            $previousStockPrice = json_decode($this->client->quote($stockSymbol)->toHeaderValue(), true)["pc"];
+            $stockPriceChange = json_decode($this->client->quote($stockSymbol)->toHeaderValue(), true)["dp"];
 
-            return new StockModel($stockSymbol, $stockName, $stockPrice, $stockPriceChange);
+            return new StockModel($stockSymbol, $stockName, $stockPrice, $previousStockPrice ,$stockPriceChange);
     }
 }
