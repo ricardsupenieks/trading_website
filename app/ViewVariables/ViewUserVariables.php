@@ -7,11 +7,11 @@ use App\Database;
 class ViewUserVariables implements ViewVariables
 {
     public function getName(): string {
-        return 'user'; // saprotu to ka itka nevajadzetu nosaukt par user jo tad var but tikai viens user, bet sajai majaslapai der
+        return 'user';
     }
 
-    public function getValue(): array {
-
+    public function getValue(): array
+    {
         if (! isset($_SESSION['user'])) {
             return [];
         }
@@ -29,6 +29,8 @@ class ViewUserVariables implements ViewVariables
         if ($user['money'] !== null) {
             $money = $user['money'];
         }
+
+//        var_dump([$user['money']]);die;
 
         return [
             "id" => $user['id'],

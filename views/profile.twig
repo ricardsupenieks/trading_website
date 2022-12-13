@@ -18,4 +18,29 @@
                 <br>
                 <input type="submit" id="submit" value="Submit" class="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline-teal">
             </form>
+        </div>
+        <div>
+            <h1>Transactions</h1>
+            <table class="table-auto">
+                <thead>
+                <tr>
+                    <th class="px-4 py-2">Symbol</th>
+                    <th class="px-4 py-2">Action</th>
+                    <th class="px-4 py-2">Amount</th>
+                    <th class="px-4 py-2">Sell profit</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for transaction in transactions %}
+                    <tr>
+                        <td class="border px-4 py-2">{{ transaction.symbol }}</td>
+                        <td class="border px-4 py-2">{{ transaction.action }}</td>
+                        <td class="border px-4 py-2">{{ transaction.amount }}</td>
+                        <td class="border px-4 py-2">{{ transaction.profit }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <h1>Profit: {{ total.profit }}</h1>
+        </div>
 {% endblock %}

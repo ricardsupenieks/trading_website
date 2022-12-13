@@ -1,5 +1,5 @@
 <?php
-// visu stocku apkopojums ar cenu izmainu, taja bridi kad perk jaizveido ari transakcija
+// visu stocku apkopojums ar cenu izmainu
 
 use App\Controllers\InspectStockController;
 use App\Controllers\FundsController;
@@ -12,7 +12,9 @@ use App\Redirect;
 use App\Session;
 use App\Template;
 use App\ViewVariables\ViewErrorVariables;
+use App\ViewVariables\ViewProfitVariable;
 use App\ViewVariables\ViewStockVariables;
+use App\ViewVariables\ViewTransactionVariables;
 use App\ViewVariables\ViewUserVariables;
 use App\ViewVariables\ViewVariables;
 use Twig\Environment;
@@ -36,6 +38,8 @@ $viewVariables = [
     ViewUserVariables::class,
     ViewErrorVariables::class,
     ViewStockVariables::class,
+    ViewTransactionVariables::class,
+    ViewProfitVariable::class,
 ];
 
 foreach ($viewVariables as $variable) {
@@ -51,7 +55,6 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
 
     $r->addRoute('GET', '/inspect', [InspectStockController::class, 'index']);
     $r->addRoute('POST', '/inspect', [InspectStockController::class, 'execute']);
-
 
     $r->addRoute('GET', '/profile', [ProfileController::class, 'showForm']);
 

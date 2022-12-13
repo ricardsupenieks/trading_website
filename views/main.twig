@@ -10,9 +10,6 @@
             <th class="px-20 py-2 bg-gray-300 text-gray-800 font-bold">Name</th>
             <th class="px-6 py-2 bg-gray-300 text-gray-800 font-bold">Amount</th>
             <th></th>
-{#            <th class="px-4 py-2 bg-gray-300 text-gray-800 font-bold">Current Price</th>#}
-{#            <th class="px-4 py-2 bg-gray-300 text-gray-800 font-bold">Bought for</th>#}
-{#            <th class="px-4 py-2 bg-gray-300 text-gray-800 font-bold">Price change</th>#}
         </tr>
         </thead>
         <tbody>
@@ -25,20 +22,8 @@
                         <form action="/inspect" method="get" class="centered">
                             <input type="hidden" name="stock" value="{{ stock.id }}">
                             <input type="submit" name="submit" id="submit" value="Inspect" class=" bg-teal-500 hover:bg-teal-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline-teal">
-
                         </form>
                     </td>
-{#                    <td class="border px-4 py-2">{{ stock.currentPrice }}</td>#}
-{#                    <td class="border px-4 py-2">${{ stock.price }}</td>#}
-{#                    <td class="border px-4 py-2">#}
-{#                        {% if stock.getPriceChange > 0 %}#}
-{#                            <span class="text-green-700">+{{ stock.priceChange }}</span>#}
-{#                        {% elseif stock.priceChange < 0 %}#}
-{#                            <span class="text-red-700">{{ stock.priceChange }}</span>#}
-{#                        {% else %}#}
-{#                            {{ stock.priceChange }}#}
-{#                        {% endif %}#}
-{#                    </td>#}
                 </tr>
         {% endfor %}
         </tbody>

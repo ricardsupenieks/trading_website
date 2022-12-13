@@ -63,7 +63,8 @@ class InspectStockController
 
         $stock = $stockService->getStock($userStock['symbol']);
 
-        $totalFunds = floatval($funds) + $stock->getPrice() * (int)$_POST['sell'] - $stock->getPrice() * (int)$_POST['buy'];
+        $totalFunds = (float)$funds + ($stock->getPrice() * (int)$_POST['sell']) - ($stock->getPrice() * (int)$_POST['buy']);
+
 
         if($totalFunds < 0) {
             $_SESSION['errors']['insufficientFunds'] = true;
@@ -76,9 +77,27 @@ class InspectStockController
         $this->connection->update('`stocks-api`.users', ['money' => $totalFunds], ['id' => $_SESSION['user']]);
         $this->connection->update('`stocks-api`.stocks', ['amount' => $totalAmount], ['id' => $_SESSION['stockId']]);
 
-//        $id=uniqid(mt_rand(),true);
 
+        if ($_POST['sell'] !== "") {
+            $profit = $stock->getPrice() * $_POST['sell'] - $userStock['price'] * $_POST['sell'];
 
+            $this->connection->insert('`stocks-api`.transactions', [
+                'symbol' => $stock->getSymbol(),
+                'amount' => $_POST['sell'],
+                'action' => 'sell',
+                'profit' => $profit,
+                'owner_id' => $_SESSION['user']
+            ]);
+        }
+
+        if ($_POST['buy'] !== "") {
+            $this->connection->insert('`stocks-api`.transactions', [
+                'symbol' => $stock->getSymbol(),
+                'amount' => $_POST['buy'],
+                'action' => 'buy',
+                'owner_id' => $_SESSION['user']
+            ]);
+        }
 
         return new Redirect('/');
     }

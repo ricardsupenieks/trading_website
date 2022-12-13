@@ -57,7 +57,7 @@ class StocksController
             ->setParameter(0, $_SESSION['user'])
             ->fetchOne();
 
-        $totalFunds = floatval($funds) - floatval($stock->getPrice()) * (int)$_POST['amount'];
+        $totalFunds = (float)$funds - ((float)$stock->getPrice() * (int)$_POST['amount']);
 
         if($totalFunds < 0) {
             $_SESSION['errors']['insufficientFunds'] = true;
