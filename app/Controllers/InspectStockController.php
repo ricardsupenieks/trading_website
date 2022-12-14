@@ -65,7 +65,6 @@ class InspectStockController
 
         $totalFunds = (float)$funds + ($stock->getPrice() * (int)$_POST['sell']) - ($stock->getPrice() * (int)$_POST['buy']);
 
-
         if($totalFunds < 0) {
             $_SESSION['errors']['insufficientFunds'] = true;
 
@@ -79,22 +78,25 @@ class InspectStockController
 
 
         if ($_POST['sell'] !== "") {
-            $profit = $stock->getPrice() * $_POST['sell'] - $userStock['price'] * $_POST['sell'];
+            $sellProfit = $stock->getPrice() * $_POST['sell'] - $userStock['price'] * $_POST['sell'];
 
             $this->connection->insert('`stocks-api`.transactions', [
                 'symbol' => $stock->getSymbol(),
                 'amount' => $_POST['sell'],
                 'action' => 'sell',
-                'profit' => $profit,
+                'profit' => $sellProfit,
                 'owner_id' => $_SESSION['user']
             ]);
         }
 
         if ($_POST['buy'] !== "") {
+//            $buyProfit = $stock->getPrice() * $_POST['buy'] - $userStock['price'] * $_POST['buy'];
+
             $this->connection->insert('`stocks-api`.transactions', [
                 'symbol' => $stock->getSymbol(),
                 'amount' => $_POST['buy'],
                 'action' => 'buy',
+//                'profit' => $buyProfit,
                 'owner_id' => $_SESSION['user']
             ]);
         }

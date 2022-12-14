@@ -1,5 +1,6 @@
 <?php
 // visu stocku apkopojums ar cenu izmainu
+// parsutit citam lietotajam stocku
 
 use App\Controllers\InspectStockController;
 use App\Controllers\FundsController;

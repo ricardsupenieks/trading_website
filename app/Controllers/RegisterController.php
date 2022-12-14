@@ -6,6 +6,7 @@ use App\Models\User\UserModel;
 use App\Redirect;
 use App\Services\Register\RegisterService;
 use App\Template;
+use App\Validation\RegisterValidation;
 
 class RegisterController
 {
@@ -23,11 +24,21 @@ class RegisterController
             $_POST['password']
         );
 
-        $registerService = new RegisterService($userCredentials, $_POST['password_repeat']);
 
-        if ($registerService->complete()) {
+
+        $validation = new RegisterValidation(
+            $userCredentials->getEmail(),
+            $userCredentials->getPassword(),
+            $_POST['password_repeat'],
+        );
+
+        if ($validation->success()) {
+            $registerService = new RegisterService($userCredentials);
+            $registerService->execute();
+
             return new Redirect('/sign-in');
         }
+
         return new Redirect('/register');
     }
 

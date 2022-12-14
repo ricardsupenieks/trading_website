@@ -4,32 +4,19 @@ namespace App\Services\Register;
 
 use App\Models\User\UserModel;
 use App\Repositories\User\DatabaseUserRepository;
-use App\Validation\RegisterValidation;
 
 class RegisterService
 {
     private UserModel $user;
-    private string $passwordRepeat;
 
-    public function __construct(UserModel $user, string $passwordRepeat)
+    public function __construct(UserModel $user)
     {
         $this->user = $user;
-        $this->passwordRepeat = $passwordRepeat;
     }
 
-    public function complete(): bool
+    public function execute(): void
     {
-        $validation = new RegisterValidation(
-            $this->user->getEmail(),
-            $this->user->getPassword(),
-            $this->passwordRepeat
-        );
-
-        if ($validation->success()) {
-            $userRepository = new DatabaseUserRepository($this->user);
-            $userRepository->storeUser();
-            return true;
-        }
-        return false;
+        $userRepository = new DatabaseUserRepository($this->user);
+        $userRepository->storeUser();
     }
 }

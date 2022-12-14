@@ -8,7 +8,7 @@
         </div>
         <h1 class="text-3xl font-bold text-center mt-4">{{ user.name }}</h1>
         <div class=" mt-10 ">
-            <h2 class="text-xl font-bold mb-4 ">Wallet: ${{ user.money }}</h2>
+            <h2 class="text-xl font-bold mb-4 ">Wallet: ${{ user.money|number_format(2) }}</h2>
             <form action="/wallet" method="post">
                 <label for="deposit" class="text-xl font-bold mb-4 inline" >Deposit: $</label>
                 <input type="text" id="deposit" name="deposit" placeholder="0.00">

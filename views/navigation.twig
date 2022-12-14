@@ -20,7 +20,7 @@
             <h1 class="text-xl lg:text-3xl font-bold"><a href="/">WallSt.</a></h1>
             {% if user %}
             <p class="text-gray-800 font-semibold ml-10">Welcome, {{ user.name }}</p>
-            <p class="text-gray-800 font-semibold ml-10">Funds: {{ user.money }}$</p>
+            <p class="text-gray-800 font-semibold ml-10">Funds: {{ user.money|number_format(2) }}$</p>
             {% endif %}
             <form action="/search" method="get" class="w-full max-w-sm mx-auto my-8">
                 <input type="text" name="query" id="query" placeholder="Search for a stock" required class="appearance-none bg-transparent border-2 border-teal-500 w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:border-teal-700">

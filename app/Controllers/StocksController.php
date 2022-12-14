@@ -20,13 +20,17 @@ class StocksController
     public function search(): Template
     {
         Session::store('searchTerm', $_GET['query']);
+
         $stockService = new StockService();
+
         if ($_SESSION['searchTerm'] !== null) {
             $stock = $stockService->getStock($_SESSION['searchTerm']);
         } else {
             $stock = $stockService->getStock($_SESSION['search']);
         }
+
         Session::store('search', $_SESSION['searchTerm']);
+
         if ($stock->getPrice() == 0 && $stock->getPriceChange() == null) {
             $failed = true;
 
@@ -42,9 +46,6 @@ class StocksController
         $stockService = new StockService();
 
         $stock = $stockService->getStock($_SESSION['search']);
-
-        $_SESSION['priceChange'] = $stock->getPriceChange();
-        $_SESSION['currentPrice'] = $stock->getPrice();
 
         $connection = Database::getConnection();
 

@@ -16,16 +16,9 @@ class LoginService
         $this->user = $user;
     }
 
-    public function complete(): bool
+    public function execute(): void
     {
-        $loginValidation = new LoginValidation($this->user->getEmail(), $this->user->getPassword());
-
-        if ($loginValidation->success())
-        {
-            $userRepository = new DatabaseUserRepository($this->user);
-            $_SESSION['user'] = $userRepository->getUser();
-            return true;
-        }
-        return false;
+        $userRepository = new DatabaseUserRepository($this->user);
+        $_SESSION['user'] = $userRepository->getUser();
     }
 }

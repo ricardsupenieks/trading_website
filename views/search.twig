@@ -19,14 +19,14 @@
 <tr>
     <td class="border px-4 py-2">{{ result.getSymbol }}</td>
     <td class="border px-4 py-2">{{ result.name }}</td>
-    <td class="border px-4 py-2">${{ result.price}}</td>
+    <td class="border px-4 py-2">${{ result.price|number_format(2)}}</td>
     <td class="border px-4 py-2">
         {% if result.priceChange > 0 %}
-            <span class="text-green-700">+{{ result.priceChange }}</span>
+            <span class="text-green-700">+{{ result.priceChange }}%</span>
         {% elseif result.priceChange < 0 %}
-            <span class="text-red-700">{{ result.priceChange }}</span>
+            <span class="text-red-700">{{ result.priceChange }}%</span>
         {% else %}
-            {{ result.priceChange }}
+            {{ result.priceChange }}%
         {% endif %}
     </td>
     </tbody>
