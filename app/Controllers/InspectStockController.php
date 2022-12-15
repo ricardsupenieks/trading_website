@@ -2,20 +2,16 @@
 
 namespace App\Controllers;
 
-use App\Database;
 use App\Redirect;
+use App\Services\Funds\FundsService;
 use App\Services\Stock\StockService;
+use App\Services\Transactions\TransactionService;
 use App\Template;
-use Doctrine\DBAL\Connection;
+use App\Validation\FundsValidation;
+use App\Validation\UserStockAmountValidation;
 
 class InspectStockController
 {
-    private Connection $connection;
-
-    public function __construct()
-    {
-        $this->connection = Database::getConnection();
-    }
 
     public function index()
     {
@@ -25,80 +21,55 @@ class InspectStockController
             $_SESSION['stockId'] = $_GET['stock'];
         }
 
-        $userStock = $this->connection->createQueryBuilder()
-            ->select('*')
-            ->from('stocks')
-            ->where('id = ?')
-            ->setParameter(0, $_SESSION['stockId'])
-            ->fetchAssociative();
+        $userStock = $stockService->getUserStock();
 
-        $stock = $stockService->getStock($userStock['symbol']);
+        $stock = $stockService->getStock($userStock->getSymbol());
 
-        return new Template('inspect.twig', ['stock' => $stock, 'userStock' => $userStock]);
+        return new Template('inspect.twig', ['stock' => $stock]);
     }
 
     public function execute()
     {
-
         $stockService = new StockService();
 
-        $funds = $this->connection->createQueryBuilder()
-            ->select('money')
-            ->from('users')
-            ->where('id = ?')
-            ->setParameter(0, $_SESSION['user'])
-            ->fetchOne();
+        $fundsService = new FundsService();
+        $funds = $fundsService->getFunds();
 
-        $userStock = $this->connection->createQueryBuilder()
-            ->select('*')
-            ->from('stocks')
-            ->where('id = ?')
-            ->setParameter(0, $_SESSION['stockId'])
-            ->fetchAssociative();
+        $userStock = $stockService->getUserStock();
 
-
-        if ((int)$userStock['amount'] - (int)$_POST['sell'] < 0) {
-            $_POST['sell'] = $userStock['amount'];
+        $userStockAmountValidation = new UserStockAmountValidation($userStock->getAmount());
+        if (!$userStockAmountValidation->success()) {
+            $_POST['sell'] = $userStock->getAmount();
         }
 
-        $stock = $stockService->getStock($userStock['symbol']);
+        $stock = $stockService->getStock($userStock->getSymbol());
 
-        $totalFunds = (float)$funds + ($stock->getPrice() * (int)$_POST['sell']) - ($stock->getPrice() * (int)$_POST['buy']);
+        $totalFunds = $funds + ($stock->getPrice() * (int)$_POST['sell']) - ($stock->getPrice() * (int)$_POST['buy']);
 
-        if($totalFunds < 0) {
+        $fundsValidation = new FundsValidation($totalFunds);
+        if(!$fundsValidation->success()) {
             $_SESSION['errors']['insufficientFunds'] = true;
 
             return new Redirect('/inspect');
         }
 
-        $totalAmount = $userStock['amount'] + $_POST['buy'] - $_POST['sell'];
+        $totalAmount = $userStock->getAmount() + $_POST['buy'] - $_POST['sell'];
 
-        $this->connection->update('`stocks-api`.users', ['money' => $totalFunds], ['id' => $_SESSION['user']]);
-        $this->connection->update('`stocks-api`.stocks', ['amount' => $totalAmount], ['id' => $_SESSION['stockId']]);
+        $fundsService->updateFunds($totalFunds);
+        $stockService->updateStock($totalAmount);
 
+        $transactionService = new TransactionService();
 
         if ($_POST['sell'] !== "") {
-            $sellProfit = $stock->getPrice() * $_POST['sell'] - $userStock['price'] * $_POST['sell'];
+            $sellProfit = $stock->getPrice() * $_POST['sell'] - $userStock->getPrice() * $_POST['sell'];
 
-            $this->connection->insert('`stocks-api`.transactions', [
-                'symbol' => $stock->getSymbol(),
-                'amount' => $_POST['sell'],
-                'action' => 'sell',
-                'profit' => $sellProfit,
-                'owner_id' => $_SESSION['user']
-            ]);
+            $transactionService->sellTransaction($stock, $sellProfit);
         }
 
         if ($_POST['buy'] !== "") {
-//            $buyProfit = $stock->getPrice() * $_POST['buy'] - $userStock['price'] * $_POST['buy'];
+            $buyProfit = $stock->getPrice() * $_POST['buy'] - $userStock->getPrice() * $_POST['buy'];
 
-            $this->connection->insert('`stocks-api`.transactions', [
-                'symbol' => $stock->getSymbol(),
-                'amount' => $_POST['buy'],
-                'action' => 'buy',
-//                'profit' => $buyProfit,
-                'owner_id' => $_SESSION['user']
-            ]);
+            $transactionService->buyTransaction($stock, $buyProfit);
         }
 
         return new Redirect('/');

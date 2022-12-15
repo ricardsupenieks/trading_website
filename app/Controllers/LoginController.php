@@ -17,7 +17,7 @@ class LoginController
 
     public function execute(): Redirect
     {
-        $userCredentials = new UserModel(null,null, $_POST['email'], $_POST['password']);
+        $userCredentials = new UserModel(null, $_POST['email'], $_POST['password']);
 
         $loginValidation = new LoginValidation($userCredentials->getEmail(), $userCredentials->getPassword());
 

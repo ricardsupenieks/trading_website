@@ -9,6 +9,7 @@ use App\Controllers\LogoutController;
 use App\Controllers\ProfileController;
 use App\Controllers\RegisterController;
 use App\Controllers\StocksController;
+use App\Controllers\TransferController;
 use App\Redirect;
 use App\Session;
 use App\Template;
@@ -16,6 +17,7 @@ use App\ViewVariables\ViewErrorVariables;
 use App\ViewVariables\ViewProfitVariable;
 use App\ViewVariables\ViewStockVariables;
 use App\ViewVariables\ViewTransactionVariables;
+use App\ViewVariables\ViewUserStockVariables;
 use App\ViewVariables\ViewUserVariables;
 use App\ViewVariables\ViewVariables;
 use Twig\Environment;
@@ -30,9 +32,7 @@ $dotenv = Dotenv\Dotenv::createImmutable('/home/ricards/PhpstormProjects/untitle
 $dotenv->load();
 
 $loader = new FilesystemLoader('../views');
-$twig = new Environment($loader, [
-    'debug' => true]);
-$twig->addExtension(new DebugExtension());
+$twig = new Environment($loader);
 
 
 $viewVariables = [
@@ -41,6 +41,7 @@ $viewVariables = [
     ViewStockVariables::class,
     ViewTransactionVariables::class,
     ViewProfitVariable::class,
+    ViewUserStockVariables::class,
 ];
 
 foreach ($viewVariables as $variable) {
@@ -58,6 +59,10 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     $r->addRoute('POST', '/inspect', [InspectStockController::class, 'execute']);
 
     $r->addRoute('GET', '/profile', [ProfileController::class, 'showForm']);
+
+    $r->addRoute('GET', '/transfer', [TransferController::class, 'showForm']);
+    $r->addRoute('POST ', '/transfer', [TransferController::class, 'showForm']);
+
 
     $r->addRoute('POST', '/wallet', [FundsController::class, 'depositWithdraw']);
 

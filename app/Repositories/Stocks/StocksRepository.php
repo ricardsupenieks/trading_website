@@ -1,8 +1,8 @@
 <?php
 
-use App\Models\Stock\StockModel;
+namespace App\Repositories\Stocks;
 
 interface StocksRepository
 {
-    public function getStock(): StockModel;
+    public function getStock();
 }

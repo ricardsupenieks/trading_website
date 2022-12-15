@@ -1,0 +1,43 @@
+{% extends 'navigation.twig' %}
+
+{% block content %}
+<div class="container mx-auto">
+    <h1 class="text-3xl font-bold mt-10">Transfer Stock</h1>
+    <form action="/transfer" method="post" class="bg-white p-4 rounded shadow-md">
+        <label class="block text-blue-500 font-bold mb-2">
+            Stock symbol:
+            <input type="text" name="symbol" id="symbol" class="form-input mt-1" />
+        </label>
+        <label class="block text-blue-500 font-bold mb-2">
+            Amount:
+            <input type="text" name="amount" id="amount" class="form-input mt-1" />
+        </label>
+        <label class="block text-blue-500 font-bold mb-2">
+            Recipient's Account ID:
+            <input type="text" name="id" id="id" class="form-input mt-1" />
+        </label>
+        <label class="block text-blue-500 font-bold mb-2">
+            Your password:
+            <input type="text" name="password" id="password" class="form-input mt-1" />
+        </label>
+        <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded-full hover:bg-blue-600 focus:outline-none focus:shadow-outline">
+            Transfer
+        </button>
+    </form>
+</div>
+    {% if transfer.success %}
+        Transfer successful <br>
+    {% endif %}
+
+    {% if errors.incorrectStockSymbol %}
+        You don't own this stock <br>
+    {% endif %}
+
+    {% if errors.incorrectTransferId %}
+        An account with this id doesn't exist <br>
+    {% endif %}
+
+    {% if errors.incorrectPassword %}
+        Incorrect password <br>
+    {% endif %}
+{% endblock %}

@@ -1,33 +1,38 @@
 {% extends 'navigation.twig' %}
 
 {% block content%}
-
     <div class="container mx-auto mt-10">
         <div class="flex items-center justify-center">
             <img src="https://i.redd.it/o6amyv7f51f51.jpg" alt="Profile picture" class="w-32 h-32 rounded-full">
         </div>
         <h1 class="text-3xl font-bold text-center mt-4">{{ user.name }}</h1>
-        <div class=" mt-10 ">
+        <h2 class="text-center">Your ID: {{ user.id }}</h2>
+        <div class="flex  justify-around ">
+        <div class="flex-column mt-10">
             <h2 class="text-xl font-bold mb-4 ">Wallet: ${{ user.money|number_format(2) }}</h2>
             <form action="/wallet" method="post">
                 <label for="deposit" class="text-xl font-bold mb-4 inline" >Deposit: $</label>
-                <input type="text" id="deposit" name="deposit" placeholder="0.00">
+                <input type="text" id="deposit" name="deposit" placeholder="0.00" class="w-40">
                 <br>
                 <label for="withdraw" class="text-xl font-bold mb-4 inline" >Withdraw: $</label>
-                <input type="text" id="withdraw" name="withdraw" placeholder="0.00">
+                <input type="text" id="withdraw" name="withdraw" placeholder="0.00" class="w-40">
                 <br>
                 <input type="submit" id="submit" value="Submit" class="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline-teal">
             </form>
+            {% if errors.insufficientFundsInWallet %}
+                Insufficient funds
+            {% endif %}
         </div>
-        <div>
-            <h1>Transactions</h1>
-            <table class="table-auto">
+            <a href="/transfer" class="text-xl font-bold mb-4 mt-10 ml-12" >Transfer stock</a>
+        <div class="flex-column mt-10 text-center">
+            <h1 class="text-xl font-bold mb-4 ">Transactions</h1>
+            <table class="table-auto overflow-y-auto ml-500 mx-auto">
                 <thead>
                 <tr>
                     <th class="px-4 py-2">Symbol</th>
                     <th class="px-4 py-2">Action</th>
                     <th class="px-4 py-2">Amount</th>
-                    <th class="px-4 py-2">Sell profit</th>
+                    <th class="px-4 py-2">Profit</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -41,6 +46,10 @@
                 {% endfor %}
                 </tbody>
             </table>
-            <h1>Profit: {{ total.profit }}</h1>
+            <h1>Sell profit: {{ total.sellProfit }}</h1>
+            <h1>Buy profit: {{ total.buyProfit }}</h1>
+            <h1>Total profit: {{ total.totalProfit }}</h1>
         </div>
+    </div>
+    </div>
 {% endblock %}

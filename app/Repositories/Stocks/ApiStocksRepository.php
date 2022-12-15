@@ -9,7 +9,6 @@ use GuzzleHttp\Client;
 
 class ApiStocksRepository
 {
-
     private DefaultApi $client;
 
     public function __construct()

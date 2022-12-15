@@ -2,31 +2,27 @@
 
 namespace App\Controllers;
 
-use App\Database;
 use App\Redirect;
-use Doctrine\DBAL\Connection;
+use App\Services\Funds\FundsService;
+use App\Validation\FundsValidation;
 
 class FundsController
 {
-    private Connection $connection;
-
-    public function __construct()
-    {
-        $this->connection = Database::getConnection();
-
-        $this->funds = $this->connection->createQueryBuilder()
-            ->select('money')
-            ->from('users')
-            ->where('id = ?')
-            ->setParameter(0, $_SESSION['user'])
-            ->fetchOne();
-
-    }
-
     public function depositWithdraw(): Redirect
     {
-        $totalFunds = floatval($_POST['deposit']) + floatval($this->funds) - floatval($_POST['withdraw']);
-        $this->connection->update('`stocks-api`.users', ['money' => $totalFunds], ['id' => $_SESSION['user']]);
+        $fundsService = new FundsService();
+
+        $funds = $fundsService->getFunds();
+
+        $totalFunds = floatval($_POST['deposit']) + $funds - floatval($_POST['withdraw']);
+        $fundsValidation = new FundsValidation($totalFunds);
+        if ($fundsValidation->success()) {
+            $fundsService->updateFunds($totalFunds);
+
+            return new Redirect('/profile');
+        }
+
+        $_SESSION['errors']['insufficientFundsInWallet'] = true;
 
         return new Redirect('/profile');
     }

@@ -18,13 +18,10 @@ class RegisterController
     public function execute(): Redirect
     {
         $userCredentials = new UserModel(
-            null,
             $_POST['name'],
             $_POST['email'],
             $_POST['password']
         );
-
-
 
         $validation = new RegisterValidation(
             $userCredentials->getEmail(),

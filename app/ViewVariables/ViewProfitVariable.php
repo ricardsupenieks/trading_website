@@ -27,12 +27,19 @@ class ViewProfitVariable implements ViewVariables
             ->setParameter(0, $_SESSION['user'])
             ->fetchAllAssociative();
 
-        $totalProfit = 0;
+        $sellProfit = 0;
+        $buyProfit = 0;
 
         foreach($transactions as $transaction) {
-            $totalProfit+=$transaction['profit'];
+            if($transaction['action'] == 'sell') {
+                $sellProfit += $transaction['profit'];
+            } else {
+                $buyProfit += $transaction['profit'];
+            }
         }
 
-        return ['profit' => $totalProfit];
+        $totalProfit = $sellProfit + $buyProfit;
+
+        return ['sellProfit' => $sellProfit, 'buyProfit' => $buyProfit, 'totalProfit' => $totalProfit];
     }
 }

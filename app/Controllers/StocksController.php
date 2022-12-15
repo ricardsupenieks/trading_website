@@ -2,11 +2,14 @@
 
 namespace App\Controllers;
 
-use App\Database;
+use App\Models\Stock\UserStockModel;
 use App\Redirect;
+use App\Services\Funds\FundsService;
 use App\Services\Stock\StockService;
+use App\Services\Transactions\TransactionService;
 use App\Session;
 use App\Template;
+use App\Validation\FundsValidation;
 
 
 class StocksController
@@ -22,19 +25,12 @@ class StocksController
         Session::store('searchTerm', $_GET['query']);
 
         $stockService = new StockService();
-
-        if ($_SESSION['searchTerm'] !== null) {
             $stock = $stockService->getStock($_SESSION['searchTerm']);
-        } else {
-            $stock = $stockService->getStock($_SESSION['search']);
-        }
 
-        Session::store('search', $_SESSION['searchTerm']);
 
         if ($stock->getPrice() == 0 && $stock->getPriceChange() == null) {
-            $failed = true;
 
-            return new Template('search.twig', ['failed' => $failed]);
+            return new Template('search.twig', ['failed' => true]);
         }
 
         return new Template('search.twig', ['result' => $stock]);
@@ -44,39 +40,36 @@ class StocksController
     public function add(): Redirect
     {
         $stockService = new StockService();
+        $stock = $stockService->getStock($_SESSION['searchTerm']);
 
-        $stock = $stockService->getStock($_SESSION['search']);
+        $fundsService = new FundsService();
+        $funds = $fundsService->getFunds();
+        $totalFunds = $funds - ((float)$stock->getPrice() * (int)$_POST['amount']);
 
-        $connection = Database::getConnection();
-
-        $queryBuilder = $connection->createQueryBuilder();
-
-        $funds = $queryBuilder
-            ->select('money')
-            ->from('users')
-            ->where('id = ?')
-            ->setParameter(0, $_SESSION['user'])
-            ->fetchOne();
-
-        $totalFunds = (float)$funds - ((float)$stock->getPrice() * (int)$_POST['amount']);
-
-        if($totalFunds < 0) {
+        $fundsValidation = new FundsValidation($totalFunds);
+        if($fundsValidation->success() !== true) {
             $_SESSION['errors']['insufficientFunds'] = true;
 
             return new Redirect('/search');
         }
 
-        $connection->update('`stocks-api`.users', ['money' => $totalFunds], ['id' => $_SESSION['user']]);
+        $fundsService->updateFunds($totalFunds);
 
-        $connection->insert('`stocks-api`.stocks', [
-            'symbol' => $stock->getSymbol(),
-            'name' => $stock->getName(),
-            'amount' => $_POST['amount'],
-            'price' => $stock->getPrice(),
-            'owner_id' => $_SESSION['user'],
-        ]);
+        $userStock = new UserStockModel(
+            $stock->getSymbol(),
+            $stock->getName(),
+            $_POST['amount'],
+            $stock->getPrice(),
+            $_SESSION['user']
+        );
+
+        $stockService->saveStock($userStock);
+
+        $profit = (float)$stock->getHighPrice() * $_POST['amount'] - (float)$stock->getPrice() * $_POST['amount'];
+
+        $transactionService = new TransactionService();
+        $transactionService->buyTransaction($stock, $profit);
 
         return new Redirect('/');
     }
-
 }
