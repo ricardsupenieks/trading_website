@@ -61,7 +61,7 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     $r->addRoute('GET', '/profile', [ProfileController::class, 'showForm']);
 
     $r->addRoute('GET', '/transfer', [TransferController::class, 'showForm']);
-    $r->addRoute('POST ', '/transfer', [TransferController::class, 'showForm']);
+    $r->addRoute('POST', '/transfer', [TransferController::class, 'execute']);
 
 
     $r->addRoute('POST', '/wallet', [FundsController::class, 'depositWithdraw']);
@@ -107,7 +107,6 @@ switch ($routeInfo[0]) {
             echo $twig->render($response->getPath(), $response->getParams());
 
             unset($_SESSION['errors']);
-            unset($_SESSION['searchTerm']);
         }
 
         if ($response instanceof Redirect) {

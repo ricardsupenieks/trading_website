@@ -30,7 +30,7 @@ class DatabaseTransactionsRepository implements TransactionsRepository
     {
         $this->connection->insert('`stocks-api`.transactions', [
             'symbol' => $stock->getSymbol(),
-            'amount' => $_POST['amount'],
+            'amount' => $_POST['buy'],
             'action' => 'buy',
             'profit' => $profit,
             'owner_id' => $_SESSION['user'],

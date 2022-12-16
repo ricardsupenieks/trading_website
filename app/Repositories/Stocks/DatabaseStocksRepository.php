@@ -15,13 +15,15 @@ class DatabaseStocksRepository implements StocksRepository
         $this->connection = Database::getConnection();
     }
 
-    public function getStock(): UserStockModel
+    public function getStock($variableToGetInformation): UserStockModel
     {
+        $stockId = $variableToGetInformation;
+
         $userStock = $this->connection->createQueryBuilder()
             ->select('*')
             ->from('stocks')
             ->where('id = ?')
-            ->setParameter(0, $_SESSION['stockId'])
+            ->setParameter(0, $stockId)
             ->fetchAssociative();
 
         return new UserStockModel(
@@ -29,29 +31,44 @@ class DatabaseStocksRepository implements StocksRepository
             $userStock['name'],
             $userStock['amount'],
             $userStock['price'],
-            $userStock['owner_id']);
+            $userStock['owner_id']
+        );
     }
 
     public function saveStock(UserStockModel $stock): void
     {
-        $this->connection->insert('`stocks-api`.stocks', [
-            'symbol' => $stock->getSymbol(),
-            'name' => $stock->getName(),
-            'amount' => $stock->getAmount(),
-            'price' => $stock->getPrice(),
-            'owner_id' => $stock->getOwnerId(),
-        ]);
+        $userStock = $this->connection->createQueryBuilder()
+            ->select('name', 'amount')
+            ->from('stocks')
+            ->where('symbol = ?')
+            ->setParameter(0, $stock->getSymbol())
+            ->fetchAssociative();
+
+        if (empty($userStock)) {
+            $this->connection->insert('`stocks-api`.stocks', [
+                'symbol' => $stock->getSymbol(),
+                'name' => $stock->getName(),
+                'amount' => $stock->getAmount(),
+                'price' => $stock->getPrice(),
+                'owner_id' => $stock->getOwnerId(),
+            ]);
+        } else {
+            $this->connection->update('`stocks-api`.stocks',
+                ['amount' =>  $userStock['amount'] + $stock->getAmount()],
+                ['symbol' => $stock->getSymbol()]
+            );
+        }
     }
 
-    public function updateStock($totalAmount): void
+    public function updateStock($totalAmount, $stockId): void
     {
         if ($totalAmount == 0) {
-            $this->connection->delete('`stocks-api`.stocks', ['id' => $_SESSION['stockId']]);
+            $this->connection->delete('`stocks-api`.stocks', ['id' => $stockId]);
         }
 
         $this->connection->update('`stocks-api`.stocks',
             ['amount' => $totalAmount],
-            ['id' => $_SESSION['stockId']]
+            ['id' => $stockId]
         );
     }
 }

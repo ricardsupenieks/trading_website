@@ -10,6 +10,7 @@ use App\Services\Transactions\TransactionService;
 use App\Session;
 use App\Template;
 use App\Validation\FundsValidation;
+use App\Validation\StockValidation;
 
 
 class StocksController
@@ -24,14 +25,15 @@ class StocksController
     {
         Session::store('searchTerm', $_GET['query']);
 
-        $stockService = new StockService();
-            $stock = $stockService->getStock($_SESSION['searchTerm']);
+        $stockValidation = new StockValidation($_SESSION['searchTerm']);
 
-
-        if ($stock->getPrice() == 0 && $stock->getPriceChange() == null) {
+        if (!$stockValidation->success()) {
 
             return new Template('search.twig', ['failed' => true]);
         }
+
+        $stockService = new StockService();
+        $stock = $stockService->getStock($_SESSION['searchTerm']);
 
         return new Template('search.twig', ['result' => $stock]);
     }

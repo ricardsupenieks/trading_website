@@ -24,20 +24,18 @@ class StockService
         return $this->apiStockRepository->getStock($stockSymbol);
     }
 
-    public function updateStock($amount): void
+    public function updateStock($amount, $stockId): void
     {
-        $this->databaseStockRepository->updateStock($amount);
+        $this->databaseStockRepository->updateStock($amount, $stockId);
     }
 
-    public function getUserStock(): UserStockModel
+    public function getUserStock($stockId): UserStockModel
     {
-        return $this->databaseStockRepository->getStock();
+        return $this->databaseStockRepository->getStock($stockId);
     }
 
     public function saveStock(UserStockModel $stock): void
     {
         $this->databaseStockRepository->saveStock($stock);
     }
-
-
 }
