@@ -13,13 +13,13 @@ class TransactionService
         $this->databaseTransactionsRepository = new DatabaseTransactionsRepository();
     }
 
-    public function buyTransaction($stock, $profit)
+    public function buyTransaction($stock, $profit, $amount)
     {
-        $this->databaseTransactionsRepository->createBuyTransaction($stock, $profit);
+        $this->databaseTransactionsRepository->createBuyTransaction($stock, $profit, $amount);
     }
 
-    public function sellTransaction($stock, $profit)
+    public function sellTransaction($stock, $profit, $amount)
     {
-        $this->databaseTransactionsRepository->createSellTransaction($stock, $profit);
+        $this->databaseTransactionsRepository->createSellTransaction($stock, $profit, $amount);
     }
 }

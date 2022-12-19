@@ -49,7 +49,6 @@ foreach ($viewVariables as $variable) {
     $variable = new $variable;
     $twig->addGlobal($variable->getName(), $variable->getValue());
 }
-
 $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     $r->addRoute('GET', '/', [StocksController::class, 'index']);
     $r->addRoute('GET', '/search', [StocksController::class, 'search']);

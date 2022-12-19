@@ -25,7 +25,7 @@ class InspectStockController
 
         $stock = $stockService->getStock($userStock->getSymbol());
 
-        return new Template('inspect.twig', ['stock' => $stock]);
+        return new Template('inspect.twig', ['stock' => $stock, 'userStock' => $userStock]);
     }
 
     public function execute()
@@ -37,7 +37,7 @@ class InspectStockController
 
         $userStock = $stockService->getUserStock($_SESSION['stockId']);
 
-        $userStockAmountValidation = new UserStockAmountValidation($userStock->getAmount());
+        $userStockAmountValidation = new UserStockAmountValidation($_POST['sell'],$userStock->getAmount());
         if (!$userStockAmountValidation->success()) {
             $_POST['sell'] = $userStock->getAmount();
         }
@@ -60,16 +60,18 @@ class InspectStockController
 
         $transactionService = new TransactionService();
 
-        if ($_POST['sell'] !== "") {
-            $sellProfit = $stock->getPrice() * $_POST['sell'] - $userStock->getPrice() * $_POST['sell'];
 
-            $transactionService->sellTransaction($stock, $sellProfit);
+        if ($_POST['sell'] !== "") {
+            $sellProfit = (float)$stock->getPrice() * (int)$_POST['sell'] - $userStock->getPrice() * (int)$_POST['sell'];
+
+            $transactionService->sellTransaction($stock, $sellProfit, $_POST['sell']);
         }
 
         if ($_POST['buy'] !== "") {
-            $buyProfit = $stock->getPrice() * $_POST['buy'] - $userStock->getPrice() * $_POST['buy'];
+            $buyProfit = (float)$stock->getHighPrice() * (int)$_POST['buy'] - (float)$stock->getPrice() * (int)$_POST['buy'];
 
-            $transactionService->buyTransaction($stock, $buyProfit);
+
+            $transactionService->buyTransaction($stock, $buyProfit, $_POST['buy']);
         }
 
         return new Redirect('/');

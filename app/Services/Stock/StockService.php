@@ -34,8 +34,13 @@ class StockService
         return $this->databaseStockRepository->getStock($stockId);
     }
 
-    public function saveStock(UserStockModel $stock): void
+    public function getUserStockBySymbol($symbol)
     {
-        $this->databaseStockRepository->saveStock($stock);
+        return $this->databaseStockRepository->getStockBySymbol($symbol);
+    }
+
+    public function saveStock(StockModel $stock, $ownerId, $amount): void
+    {
+        $this->databaseStockRepository->saveStock($stock,$ownerId,$amount);
     }
 }

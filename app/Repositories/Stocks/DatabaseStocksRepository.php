@@ -3,6 +3,7 @@
 namespace App\Repositories\Stocks;
 
 use App\Database;
+use App\Models\Stock\StockModel;
 use App\Models\Stock\UserStockModel;
 use Doctrine\DBAL\Connection;
 
@@ -27,6 +28,7 @@ class DatabaseStocksRepository implements StocksRepository
             ->fetchAssociative();
 
         return new UserStockModel(
+            $userStock['id'],
             $userStock['symbol'],
             $userStock['name'],
             $userStock['amount'],
@@ -35,27 +37,30 @@ class DatabaseStocksRepository implements StocksRepository
         );
     }
 
-    public function saveStock(UserStockModel $stock): void
+    public function saveStock(StockModel $stock, $ownerId, $amount): void
     {
-        $userStock = $this->connection->createQueryBuilder()
-            ->select('name', 'amount')
+        $userStockAmount = $this->connection->createQueryBuilder()
+            ->select( 'amount')
             ->from('stocks')
-            ->where('symbol = ?')
-            ->setParameter(0, $stock->getSymbol())
-            ->fetchAssociative();
+            ->where('owner_id = ?')
+            ->andWhere('name = ?')
+            ->setParameter(0, $ownerId)
+            ->setParameter(1, $stock->getName())
+            ->fetchOne();
 
-        if (empty($userStock)) {
+
+        if (!$userStockAmount) {
             $this->connection->insert('`stocks-api`.stocks', [
                 'symbol' => $stock->getSymbol(),
                 'name' => $stock->getName(),
-                'amount' => $stock->getAmount(),
+                'amount' => $amount,
                 'price' => $stock->getPrice(),
-                'owner_id' => $stock->getOwnerId(),
+                'owner_id' => $ownerId,
             ]);
         } else {
             $this->connection->update('`stocks-api`.stocks',
-                ['amount' =>  $userStock['amount'] + $stock->getAmount()],
-                ['symbol' => $stock->getSymbol()]
+                ['amount' =>  $userStockAmount + $amount],
+                ['owner_id' => $ownerId, 'symbol' => $stock->getSymbol()]
             );
         }
     }
@@ -69,6 +74,28 @@ class DatabaseStocksRepository implements StocksRepository
         $this->connection->update('`stocks-api`.stocks',
             ['amount' => $totalAmount],
             ['id' => $stockId]
+        );
+    }
+
+    public function getStockBySymbol($symbol)
+    {
+        $userStock = $this->connection->createQueryBuilder()
+            ->select('*')
+            ->from('stocks')
+            ->where('symbol = ?')
+            ->setParameter(0, $symbol)
+            ->fetchAssociative();
+
+        if(!$userStock){
+            return null;
+        }
+        return new UserStockModel(
+            $userStock['id'],
+            $userStock['symbol'],
+            $userStock['name'],
+            $userStock['amount'],
+            $userStock['price'],
+            $userStock['owner_id']
         );
     }
 }

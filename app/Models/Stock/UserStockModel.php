@@ -9,8 +9,9 @@ class UserStockModel
     private int $amount;
     private float $price;
     private int $ownerId;
+    private $id;
 
-    public function __construct($symbol, $name, $amount, $price, $ownerId)
+    public function __construct($id, $symbol, $name, $amount, $price, $ownerId = null)
     {
 
         $this->symbol = $symbol;
@@ -18,8 +19,14 @@ class UserStockModel
         $this->amount = $amount;
         $this->price = $price;
         $this->ownerId = $ownerId;
+        $this->id = $id;
     }
 
+
+    public function getId()
+    {
+        return $this->id;
+    }
 
     public function getSymbol()
     {

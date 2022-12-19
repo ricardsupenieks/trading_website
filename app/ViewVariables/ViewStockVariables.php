@@ -3,9 +3,17 @@
 namespace App\ViewVariables;
 
 use App\Database;
+use Doctrine\DBAL\Connection;
 
 class ViewStockVariables implements ViewVariables
 {
+    private Connection $connection;
+
+    public function __construct()
+    {
+        $this->connection = Database::getConnection();
+    }
+
     public function getName(): string
     {
         return 'boughtStocks';
@@ -17,7 +25,6 @@ class ViewStockVariables implements ViewVariables
             return [];
         }
 
-        $this->connection = Database::getConnection();
 
         $queryBuilder = $this->connection->createQueryBuilder();
 

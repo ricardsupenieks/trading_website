@@ -15,22 +15,22 @@ class DatabaseTransactionsRepository implements TransactionsRepository
         $this->connection = Database::getConnection();
     }
 
-    public function createSellTransaction(StockModel $stock, $profit)
+    public function createSellTransaction(StockModel $stock, $profit, $amount)
     {
         $this->connection->insert('`stocks-api`.transactions', [
             'symbol' => $stock->getSymbol(),
-            'amount' => $_POST['sell'],
+            'amount' => $amount,
             'action' => 'sell',
             'profit' => $profit,
             'owner_id' => $_SESSION['user'],
             ]);
     }
 
-    public function createBuyTransaction(StockModel $stock, $profit)
+    public function createBuyTransaction(StockModel $stock, $profit, $amount)
     {
         $this->connection->insert('`stocks-api`.transactions', [
             'symbol' => $stock->getSymbol(),
-            'amount' => $_POST['buy'],
+            'amount' => $amount,
             'action' => 'buy',
             'profit' => $profit,
             'owner_id' => $_SESSION['user'],

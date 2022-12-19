@@ -16,7 +16,7 @@ class RegisterService
 
     public function execute(): void
     {
-        $userRepository = new DatabaseUserRepository($this->user);
-        $userRepository->storeUser();
+        $userRepository = new DatabaseUserRepository();
+        $userRepository->storeUser($this->user);
     }
 }

@@ -21,6 +21,6 @@ class ViewUserStockVariables implements ViewVariables
             ->from('stocks')
             ->where('id = ?')
             ->setParameter(0, $_SESSION['stockId'])
-            ->fetchAssociative();
+            ->fetchAllAssociative();
     }
 }

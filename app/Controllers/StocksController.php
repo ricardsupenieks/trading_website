@@ -2,7 +2,7 @@
 
 namespace App\Controllers;
 
-use App\Models\Stock\UserStockModel;
+use App\Models\Stock\StockModel;
 use App\Redirect;
 use App\Services\Funds\FundsService;
 use App\Services\Stock\StockService;
@@ -57,20 +57,19 @@ class StocksController
 
         $fundsService->updateFunds($totalFunds);
 
-        $userStock = new UserStockModel(
+        $userStock = new StockModel(
             $stock->getSymbol(),
             $stock->getName(),
-            $_POST['amount'],
             $stock->getPrice(),
-            $_SESSION['user']
+            $stock->getHighPrice()
         );
 
-        $stockService->saveStock($userStock);
+        $stockService->saveStock($userStock, $_SESSION['user'], $_POST['amount']);
 
-        $profit = (float)$stock->getHighPrice() * $_POST['amount'] - (float)$stock->getPrice() * $_POST['amount'];
+        $profit = (float)$stock->getHighPrice() * (int)$_POST['amount'] - (float)$stock->getPrice() * (int)$_POST['amount'];
 
         $transactionService = new TransactionService();
-        $transactionService->buyTransaction($stock, $profit);
+        $transactionService->buyTransaction($stock, $profit, $_POST['amount']);
 
         return new Redirect('/');
     }

@@ -9,33 +9,28 @@ use Doctrine\DBAL\Connection;
 class DatabaseUserRepository implements UserRepository
 {
     private Connection $connection;
-    private UserModel $user;
 
-    public function __construct(UserModel $user)
+    public function __construct()
     {
         $this->connection = Database::getConnection();
 
-        $this->user = $user;
     }
 
-    public function storeUser(): void
+    public function storeUser(UserModel $user): void
     {
         $this->connection->insert('users', [
-            'name' => $this->user->getName(),
-            'email' => $this->user->getEmail(),
-            'password' => password_hash($this->user->getPassword(), PASSWORD_DEFAULT)
+            'name' => $user->getName(),
+            'email' => $user->getEmail(),
+            'password' => password_hash($user->getPassword(), PASSWORD_DEFAULT)
         ]);
-
     }
 
-    public function getUser(): string
+    public function getUser(string $email): string
     {
         $resultSet = $this->connection->executeQuery(
             'SELECT id FROM `stocks-api`.users WHERE email=?', [
-            $this->user->getEmail()]);
+            $email]);
 
-        $id = $resultSet->fetchOne();
-
-        return $id;
+        return $resultSet->fetchOne();
     }
 }

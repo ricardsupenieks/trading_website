@@ -6,7 +6,7 @@ use App\Models\Stock\StockModel;
 
 interface TransactionsRepository
 {
-    public function createSellTransaction(StockModel $stock, $profit);
-    public function createBuyTransaction(StockModel $stock, $profit);
+    public function createSellTransaction(StockModel $stock, $profit, $amount);
+    public function createBuyTransaction(StockModel $stock, $profit, $amount);
 
 }
