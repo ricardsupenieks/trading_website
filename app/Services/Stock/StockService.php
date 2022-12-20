@@ -43,4 +43,9 @@ class StockService
     {
         $this->databaseStockRepository->saveStock($stock,$ownerId,$amount);
     }
+
+    public function shortStock(StockModel $stock, $ownerId, $amount): void
+    {
+        $this->databaseStockRepository->borrowStock($stock,$ownerId,$amount);
+    }
 }

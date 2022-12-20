@@ -36,10 +36,16 @@
             </tbody>
             </table>
             {% if user %}
-                <form action="/add" method="post">
+                <form action="/add" method="post" class="my-10 centered">
                     <input type="text" name="amount" id="amount" placeholder="Enter amount">
-                    <input type="submit" name="submit" id="submit" value="buy" class="bg-teal-500 hover:bg-teal-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline-teal">
-
+                    <input type="submit" name="submit" id="submit" value="BUY" class="bg-teal-500 hover:bg-teal-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline-teal">
+                </form>
+                <div class="centered">
+                    OR
+                </div>
+                <form action="/sell" method="post" class="my-10 centered">
+                    <input type="text" name="amount" id="amount" placeholder="Enter amount">
+                    <input type="submit" name="submit" id="submit" value="SELL" class="bg-teal-500 hover:bg-teal-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline-teal">
                 </form>
             {% endif %}
             {% if errors.insufficientFunds %}

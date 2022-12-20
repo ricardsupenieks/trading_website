@@ -19,10 +19,17 @@
                     <td class="border-b-2 px-4 py-2 centered">{{ stock.name }}</a></td>
                     <td class="border-b-2 border-r-2 px-4 py-2">{{ stock.amount }}</td>
                     <td>
-                        <form action="/inspect" method="get" class="centered">
-                            <input type="hidden" name="stock" value="{{ stock.id }}">
-                            <input type="submit" name="submit" id="submit" value="Inspect" class=" bg-teal-500 hover:bg-teal-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline-teal">
-                        </form>
+                        {% if stock.amount > 0 %}
+                            <form action="/inspect" method="get" class="centered inline">
+                                <input type="hidden" name="stock" value="{{ stock.id }}">
+                                <input type="submit" name="submit" id="submit" value="BUY/SELL" class=" bg-teal-500 hover:bg-teal-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline-teal">
+                            </form>
+                        {% else %}
+                            <form action="/short" method="get" class="centered inline">
+                                <input type="hidden" name="stock" value="{{ stock.id }}">
+                                <input type="submit" name="submit" id="submit" value="REBUY/SHORT" class=" bg-teal-500 hover:bg-teal-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline-teal">
+                            </form>
+                        {% endif %}
                     </td>
                 </tr>
         {% endfor %}

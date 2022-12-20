@@ -8,6 +8,7 @@ use App\Controllers\LoginController;
 use App\Controllers\LogoutController;
 use App\Controllers\ProfileController;
 use App\Controllers\RegisterController;
+use App\Controllers\ShortController;
 use App\Controllers\StocksController;
 use App\Controllers\TransferController;
 use App\Redirect;
@@ -53,6 +54,10 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     $r->addRoute('GET', '/', [StocksController::class, 'index']);
     $r->addRoute('GET', '/search', [StocksController::class, 'search']);
     $r->addRoute('POST', '/add', [StocksController::class, 'add']);
+    $r->addRoute('POST', '/sell', [StocksController::class, 'borrow']);
+
+    $r->addRoute('GET', '/short', [ShortController::class, 'index']);
+    $r->addRoute('POST', '/short', [ShortController::class, 'execute']);
 
     $r->addRoute('GET', '/inspect', [InspectStockController::class, 'index']);
     $r->addRoute('POST', '/inspect', [InspectStockController::class, 'execute']);

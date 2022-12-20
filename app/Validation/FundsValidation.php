@@ -4,7 +4,7 @@ namespace App\Validation;
 
 class FundsValidation implements ValidationInterface
 {
-    private int $totalFunds;
+    private float $totalFunds;
 
     public function __construct($totalFunds)
     {

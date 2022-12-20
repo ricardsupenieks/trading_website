@@ -4,12 +4,12 @@
     <a href="/" class="m-4 text-xl">Back</a>
     <div class="container mx-auto mt-10">
     <h1 class="text-3xl font-bold text-center my-4">
-        {{ stock.name }} ( {{ stock.symbol}} )
+        {{ stock.name }} ( {{ stock.symbol}} ) (SHORTED)
     </h1>
     <table class="table- w-full">
         <thead>
         <tr>
-            <th class="px-4 py-2 bg-gray-300 text-gray-800 font-bold">Bought for</th>
+            <th class="px-4 py-2 bg-gray-300 text-gray-800 font-bold">Sold for</th>
             <th class="px-4 py-2 bg-gray-300 text-gray-800 font-bold">Amount</th>
             <th class="px-4 py-2 bg-gray-300 text-gray-800 font-bold">Current price</th>
             <th class="px-4 py-2 bg-gray-300 text-gray-800 font-bold">Previous price</th>
@@ -33,11 +33,11 @@
             </td>
         </tbody>
     </table>
-    <form action="/inspect" method="post">
-        <label for="deposit" class="text-xl font-bold mb-4 inline" >Buy: </label>
+    <form action="/short" method="post">
+        <label for="deposit" class="text-xl font-bold mb-4 inline" >Rebuy: </label>
         <input type="text" id="buy" name="buy" placeholder="amount">
         <br>
-        <label for="withdraw" class="text-xl font-bold mb-4 inline" >Sell: </label>
+        <label for="withdraw" class="text-xl font-bold mb-4 inline" >Short: </label>
         <input type="text" id="sell" name="sell" placeholder="amount">
         <br>
         <input type="submit" id="submit" value="Submit" class="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline-teal">

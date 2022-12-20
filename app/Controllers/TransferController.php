@@ -61,8 +61,8 @@ class TransferController
             $_POST['amount'] = $userStock->getAmount();
         }
 
-        $funds = $userStock->getAmount() - $_POST['amount'];
-        $stockService->updateStock($funds, $userStock->getId());
+        $amount = $userStock->getAmount() - $_POST['amount'];
+        $stockService->updateStock($amount, $userStock->getId());
 
         $userService = new UserService();
         $userId = $userService->getUserId($_POST['email']);

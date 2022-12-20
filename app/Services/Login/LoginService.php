@@ -7,7 +7,6 @@ use App\Repositories\User\DatabaseUserRepository;
 
 class LoginService
 {
-
     private UserModel $user;
 
     public function __construct(UserModel $user)

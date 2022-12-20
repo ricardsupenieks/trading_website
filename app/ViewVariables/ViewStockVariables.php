@@ -25,7 +25,6 @@ class ViewStockVariables implements ViewVariables
             return [];
         }
 
-
         $queryBuilder = $this->connection->createQueryBuilder();
 
         $stocks = $queryBuilder
@@ -35,6 +34,6 @@ class ViewStockVariables implements ViewVariables
             ->setParameter(0, $_SESSION['user'])
             ->fetchAllAssociative();
 
-            return $stocks;
+        return $stocks;
     }
 }

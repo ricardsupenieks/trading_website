@@ -11,6 +11,7 @@ use App\Session;
 use App\Template;
 use App\Validation\FundsValidation;
 use App\Validation\StockValidation;
+use App\Validation\UserStockAmountValidation;
 
 
 class StocksController
@@ -70,6 +71,61 @@ class StocksController
 
         $transactionService = new TransactionService();
         $transactionService->buyTransaction($stock, $profit, $_POST['amount']);
+
+        return new Redirect('/');
+    }
+
+    public function borrow(): Redirect
+    {
+        $stockService = new StockService();
+
+        $userStock = $stockService->getUserStockBySymbol($_SESSION['searchTerm']);
+
+        if($userStock !== null) {
+            $stock = $stockService->getStock($_SESSION['searchTerm']);
+
+            $fundsService = new FundsService();
+            $funds = $fundsService->getFunds();
+
+            $totalFunds = $funds + ($stock->getPrice() * (int)$_POST['amount']);
+
+            if($userStock->getAmount() > 0) {
+                $userStockAmountValidation = new UserStockAmountValidation($_POST['amount'],$userStock->getAmount());
+                if (!$userStockAmountValidation->success()) {
+                    $_POST['amount'] = $userStock->getAmount();
+                }
+                $totalAmount = $userStock->getAmount() - $_POST['amount'];
+            } else {
+                $totalAmount = $userStock->getAmount() - $_POST['amount'];
+            }
+
+            $stockService->updateStock($totalAmount, $userStock->getId());
+            $fundsService->updateFunds($totalFunds);
+
+            $profit = (float)$stock->getPrice() * (int)$_POST['amount'] - $userStock->getPrice() * (int)$_POST['amount'];
+
+
+            $transactionService = new TransactionService();
+            $transactionService->sellTransaction($stock, $profit, $_POST['amount']);
+
+            return new Redirect('/');
+        }
+
+        $stock = $stockService->getStock($_SESSION['searchTerm']);
+
+        $fundsService = new FundsService();
+        $funds = $fundsService->getFunds();
+        $totalFunds = $funds + ($stock->getPrice() * (int)$_POST['amount']);
+        $fundsService->updateFunds($totalFunds);
+
+        $userStock = new StockModel(
+            $stock->getSymbol(),
+            $stock->getName(),
+            $stock->getPrice(),
+            $stock->getHighPrice(),
+        );
+
+        $stockService->shortStock($userStock, $_SESSION['user'], -$_POST['amount']);
 
         return new Redirect('/');
     }
