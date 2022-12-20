@@ -37,6 +37,12 @@ class TransferController
             return new Redirect('/transfer');
         }
 
+        if($stockValidation->getAmount() < 0){
+            $_SESSION['errors']['shortedStock'] = true;
+
+            return new Redirect('/transfer');
+        }
+
         //velak sadalisu sito dalu ka pienakas
         $connection = Database::getConnection();
 

@@ -25,8 +25,8 @@
         </button>
     </form>
 </div>
-    {% if transfer.success %}
-        Transfer successful <br>
+    {% if errors.shortedStock %}
+        Can not transfer shorted stock <br>
     {% endif %}
 
     {% if errors.incorrectStockSymbol %}
