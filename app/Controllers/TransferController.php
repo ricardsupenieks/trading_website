@@ -43,6 +43,12 @@ class TransferController
             return new Redirect('/transfer');
         }
 
+        if ($userValidation->success() === false) {
+            $_SESSION['errors']['incorrectTransferEmail'] = true;
+
+            return new Redirect('/transfer');
+        }
+
         //velak sadalisu sito dalu ka pienakas
         $connection = Database::getConnection();
 

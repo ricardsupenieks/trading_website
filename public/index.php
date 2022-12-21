@@ -1,6 +1,4 @@
 <?php
-// visu stocku apkopojums ar cenu izmainu
-// parsutit citam lietotajam stocku
 
 use App\Controllers\InspectStockController;
 use App\Controllers\FundsController;
@@ -52,6 +50,13 @@ foreach ($viewVariables as $variable) {
     $variable = new $variable;
     $twig->addGlobal($variable->getName(), $variable->getValue());
 }
+
+$container = new DI\Container();
+$container->set(
+    \App\Repositories\Funds\FundsRepository::class,
+    \DI\create(\App\Repositories\Funds\DatabaseFundsRepository::class),
+);
+
 $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     $r->addRoute('GET', '/', [StocksController::class, 'index']);
     $r->addRoute('GET', '/search', [StocksController::class, 'search']);
@@ -69,7 +74,6 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     $r->addRoute('GET', '/transfer', [TransferController::class, 'showForm']);
     $r->addRoute('POST', '/transfer', [TransferController::class, 'execute']);
 
-
     $r->addRoute('POST', '/wallet', [FundsController::class, 'depositWithdraw']);
 
     $r->addRoute('GET', '/sign-in', [LoginController::class, 'showForm']);
@@ -79,7 +83,6 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     $r->addRoute('POST', '/register', [RegisterController::class, 'execute']);
 
     $r->addRoute('GET', '/logout', [LogoutController::class, 'execute']);
-
 });
 
 // Fetch method and URI from somewhere
@@ -106,8 +109,8 @@ switch ($routeInfo[0]) {
         // ... call $handler with $vars
 
         [$controller, $method] = $handler;
-        $response = (new $controller)->{$method}($vars);
-
+//        $response = (new $controller)->{$method}($vars);
+        $response = $container->get($controller)->{$method}($vars);
 
         if ($response instanceof Template) {
             echo $twig->render($response->getPath(), $response->getParams());
