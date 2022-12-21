@@ -33,11 +33,11 @@ class ShortController
         $userStock = $stockService->getUserStock($_SESSION['stockId']);
 
         $totalAmount = $userStock->getAmount() - $_POST['sell'] + $_POST['buy'];
-
         if($totalAmount > 0) {
             $_POST['buy'] = -1*($userStock->getAmount() - $_POST['sell']);
+            $totalAmount = $userStock->getAmount() - $_POST['sell'] + $_POST['buy'];
+;
         }
-
         $stock = $stockService->getStock($userStock->getSymbol());
 
         $fundsService = new FundsService();
@@ -56,7 +56,6 @@ class ShortController
         $stockService->updateStock($totalAmount, $_SESSION['stockId']);
 
         $transactionService = new TransactionService();
-
 
         if ($_POST['sell'] !== "") {
             $sellProfit = (float)$stock->getPrice() * (int)$_POST['sell'] - $userStock->getPrice() * (int)$_POST['sell'];

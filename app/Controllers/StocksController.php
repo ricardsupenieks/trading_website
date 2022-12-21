@@ -58,6 +58,15 @@ class StocksController
 
         $fundsService->updateFunds($totalFunds);
 
+        $userStock = $stockService->getUserStockBySymbol($_SESSION['searchTerm'], $_SESSION['user']);
+
+        if($userStock !== null) {
+            $totalAmount = $userStock->getAmount() + $_POST['amount'];
+            if ($userStock->getAmount() < 0 && $totalAmount > 0) {
+                $_POST['amount'] = -$userStock->getAmount();
+            }
+        }
+
         $userStock = new StockModel(
             $stock->getSymbol(),
             $stock->getName(),
@@ -79,7 +88,7 @@ class StocksController
     {
         $stockService = new StockService();
 
-        $userStock = $stockService->getUserStockBySymbol($_SESSION['searchTerm']);
+        $userStock = $stockService->getUserStockBySymbol($_SESSION['searchTerm'], $_SESSION['user']);
 
         if($userStock !== null) {
             $stock = $stockService->getStock($_SESSION['searchTerm']);
@@ -126,6 +135,11 @@ class StocksController
         );
 
         $stockService->shortStock($userStock, $_SESSION['user'], -$_POST['amount']);
+
+        $transactionService = new TransactionService();
+
+        $profit = (float)$stock->getHighPrice() * (int)$_POST['amount'] - $stock->getPrice() * (int)$_POST['amount'];
+        $transactionService->sellTransaction($stock, $profit, $_POST['amount']);
 
         return new Redirect('/');
     }

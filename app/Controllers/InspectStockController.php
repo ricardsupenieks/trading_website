@@ -37,9 +37,10 @@ class InspectStockController
 
         $userStock = $stockService->getUserStock($_SESSION['stockId']);
 
-        $userStockAmountValidation = new UserStockAmountValidation($_POST['sell'],$userStock->getAmount());
-        if (!$userStockAmountValidation->success()) {
-            $_POST['sell'] = $userStock->getAmount();
+        $totalAmount = $userStock->getAmount() - $_POST['sell'] + $_POST['buy'];
+        if($totalAmount <= 0) {
+            $_POST['sell'] = ($userStock->getAmount() + $_POST['buy']);
+            $totalAmount = $userStock->getAmount() - $_POST['sell'] + $_POST['buy'];
         }
 
         $stock = $stockService->getStock($userStock->getSymbol());
@@ -52,8 +53,6 @@ class InspectStockController
 
             return new Redirect('/inspect');
         }
-
-        $totalAmount = $userStock->getAmount() + $_POST['buy'] - $_POST['sell'];
 
         $fundsService->updateFunds($totalFunds);
         $stockService->updateStock($totalAmount, $_SESSION['stockId']);

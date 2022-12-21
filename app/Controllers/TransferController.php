@@ -23,9 +23,15 @@ class TransferController
     {
         $stockService = new StockService();
 
-        $stockValidation = $stockService->getUserStockBySymbol($_POST['symbol']);
+        $stockValidation = $stockService->getUserStockBySymbol($_POST['symbol'], $_SESSION['user']);
         if ($stockValidation === null) {
             $_SESSION['errors']['incorrectStockSymbol'] = true;
+
+            return new Redirect('/transfer');
+        }
+
+        if($stockValidation->getAmount() < 0){
+            $_SESSION['errors']['shortedStock'] = true;
 
             return new Redirect('/transfer');
         }
@@ -33,12 +39,6 @@ class TransferController
         $userValidation = new UserValidation($_POST['email']);
         if ($userValidation->success() === false) {
             $_SESSION['errors']['incorrectTransferEmail'] = true;
-
-            return new Redirect('/transfer');
-        }
-
-        if($stockValidation->getAmount() < 0){
-            $_SESSION['errors']['shortedStock'] = true;
 
             return new Redirect('/transfer');
         }
@@ -60,10 +60,10 @@ class TransferController
         }
 
         $stockService = new StockService();
-        $userStock = $stockService->getUserStockBySymbol($_POST['symbol']);
+        $userStock = $stockService->getUserStockBySymbol($_POST['symbol'], $_SESSION['user']);
 
         $userStockAmountValidation = new UserStockAmountValidation($userStock->getAmount(), $_POST['amount']);
-        if ($userStockAmountValidation->success() === true) {
+        if ($userStockAmountValidation->success() == true) {
             $_POST['amount'] = $userStock->getAmount();
         }
 
@@ -83,6 +83,6 @@ class TransferController
 
         $stockService->saveStock($stock, $userId, $_POST['amount']);
 
-        return new Redirect('/transfer');
+        return new Redirect('/');
     }
 }

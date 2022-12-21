@@ -11,7 +11,9 @@ use App\Controllers\RegisterController;
 use App\Controllers\ShortController;
 use App\Controllers\StocksController;
 use App\Controllers\TransferController;
+use App\Models\User\UserModel;
 use App\Redirect;
+use App\Services\Login\LoginService;
 use App\Session;
 use App\Template;
 use App\ViewVariables\ViewErrorVariables;
@@ -24,6 +26,7 @@ use App\ViewVariables\ViewVariables;
 use Twig\Environment;
 use Twig\Extension\DebugExtension;
 use Twig\Loader\FilesystemLoader;
+use function DI\create;
 
 require '../vendor/autoload.php';
 
@@ -34,7 +37,6 @@ $dotenv->load();
 
 $loader = new FilesystemLoader('../views');
 $twig = new Environment($loader);
-
 
 $viewVariables = [
     ViewUserVariables::class,

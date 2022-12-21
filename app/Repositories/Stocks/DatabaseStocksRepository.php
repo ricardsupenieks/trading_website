@@ -37,13 +37,15 @@ class DatabaseStocksRepository implements StocksRepository
         );
     }
 
-    public function getStockBySymbol($symbol)
+    public function getStockBySymbol($symbol, $userId)
     {
         $userStock = $this->connection->createQueryBuilder()
             ->select('*')
             ->from('stocks')
             ->where('symbol = ?')
+            ->andWhere('owner_id = ?')
             ->setParameter(0, $symbol)
+            ->setParameter(1, $userId)
             ->fetchAssociative();
 
         if(!$userStock){
@@ -80,10 +82,14 @@ class DatabaseStocksRepository implements StocksRepository
                 'owner_id' => $ownerId,
             ]);
         } else {
-            $this->connection->update('`stocks-api`.stocks',
-                ['amount' =>  $userStockAmount + $amount],
-                ['owner_id' => $ownerId, 'symbol' => $stock->getSymbol()]
-            );
+            if($userStockAmount + $amount != 0) {
+                $this->connection->update('`stocks-api`.stocks',
+                    ['amount' => $userStockAmount + $amount],
+                    ['owner_id' => $ownerId, 'symbol' => $stock->getSymbol()]
+                );
+            } else {
+                $this->connection->delete('`stocks-api`.stocks', ['owner_id' => $ownerId, 'symbol' => $stock->getSymbol()]);
+            }
         }
     }
 
