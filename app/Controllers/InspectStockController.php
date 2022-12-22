@@ -55,20 +55,19 @@ class InspectStockController
         }
 
         $fundsService->updateFunds($totalFunds);
-        $stockService->updateStock($totalAmount, $_SESSION['stockId']);
+        $stockService->updateStock($totalAmount, $_SESSION['stockId'], $_POST['buy'], $_POST['sell'], $stock);
 
         $transactionService = new TransactionService();
 
 
         if ($_POST['sell'] !== "") {
-            $sellProfit = (float)$stock->getPrice() * (int)$_POST['sell'] - $userStock->getPrice() * (int)$_POST['sell'];
+            $sellProfit = (float)$stock->getPrice() * (int)$_POST['sell'] - $userStock->getAveragePrice() * (int)$_POST['sell'];
 
             $transactionService->sellTransaction($stock, $sellProfit, $_POST['sell']);
         }
 
         if ($_POST['buy'] !== "") {
             $buyProfit = (float)$stock->getHighPrice() * (int)$_POST['buy'] - (float)$stock->getPrice() * (int)$_POST['buy'];
-
 
             $transactionService->buyTransaction($stock, $buyProfit, $_POST['buy']);
         }

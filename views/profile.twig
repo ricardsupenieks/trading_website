@@ -45,9 +45,9 @@
                 {% endfor %}
                 </tbody>
             </table>
-            <h1>Sell profit: {{ total.sellProfit }}</h1>
-            <h1>Buy profit: {{ total.buyProfit }}</h1>
-            <h1>Total profit: {{ total.totalProfit }}</h1>
+            <h1>Sell profit: {{ total.sellProfit|number_format(2) }}</h1>
+            <h1>Buy profit: {{ total.buyProfit|number_format(2) }}</h1>
+            <h1>Total profit: {{ total.totalProfit|number_format(2) }}</h1>
         </div>
     </div>
     </div>

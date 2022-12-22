@@ -32,7 +32,8 @@ class DatabaseStocksRepository implements StocksRepository
             $userStock['symbol'],
             $userStock['name'],
             $userStock['amount'],
-            $userStock['price'],
+            $userStock['total_price'],
+            $userStock['avg_price'],
             $userStock['owner_id']
         );
     }
@@ -56,35 +57,39 @@ class DatabaseStocksRepository implements StocksRepository
             $userStock['symbol'],
             $userStock['name'],
             $userStock['amount'],
-            $userStock['price'],
+            $userStock['total_price'],
+            $userStock['avg_price'],
             $userStock['owner_id']
         );
     }
 
     public function saveStock(StockModel $stock, $ownerId, $amount): void
     {
-        $userStockAmount = $this->connection->createQueryBuilder()
-            ->select( 'amount')
+        $userStock = $this->connection->createQueryBuilder()
+            ->select( '*')
             ->from('stocks')
             ->where('owner_id = ?')
             ->andWhere('name = ?')
             ->setParameter(0, $ownerId)
             ->setParameter(1, $stock->getName())
-            ->fetchOne();
+            ->fetchAssociative();
 
-
-        if (!$userStockAmount) {
+        if (!$userStock) {
             $this->connection->insert('`stocks-api`.stocks', [
                 'symbol' => $stock->getSymbol(),
                 'name' => $stock->getName(),
                 'amount' => $amount,
-                'price' => $stock->getPrice(),
+                'total_price' => $stock->getPrice() * $amount,
+                'avg_price' => $stock->getPrice(),
                 'owner_id' => $ownerId,
             ]);
         } else {
-            if($userStockAmount + $amount != 0) {
-                $this->connection->update('`stocks-api`.stocks',
-                    ['amount' => $userStockAmount + $amount],
+            if($userStock['amount']+ $amount != 0) {
+                $this->connection->update('`stocks-api`.stocks', [
+                    'amount' => $userStock['amount'] + $amount,
+                    'total_price' => $userStock['total_price'] + $stock->getPrice() * $amount,
+                    'avg_price' => ($userStock['total_price'] + $stock->getPrice() * $amount) / ($userStock['amount'] + $amount)
+                ],
                     ['owner_id' => $ownerId, 'symbol' => $stock->getSymbol()]
                 );
             } else {
@@ -93,43 +98,70 @@ class DatabaseStocksRepository implements StocksRepository
         }
     }
 
-    public function borrowStock(StockModel $stock, $ownerId, $amount): void
+    public function borrowStock($stock, $ownerId, $amount): void
     {
-        $userStockAmount = $this->connection->createQueryBuilder()
-            ->select( 'amount')
+        $userStock = $this->connection->createQueryBuilder()
+            ->select( '*')
             ->from('stocks')
             ->where('owner_id = ?')
             ->andWhere('name = ?')
             ->setParameter(0, $ownerId)
             ->setParameter(1, $stock->getName())
-            ->fetchOne();
+            ->fetchAssociative();
 
-
-        if (!$userStockAmount) {
+        if (!$userStock) {
             $this->connection->insert('`stocks-api`.stocks', [
                 'symbol' => $stock->getSymbol(),
                 'name' => $stock->getName(),
                 'amount' => $amount,
-                'price' => $stock->getPrice(),
+                'total_price' => $stock->getPrice() * abs($amount),
+                'avg_price' => $stock->getPrice(),
                 'owner_id' => $ownerId,
             ]);
         } else {
-            $this->connection->update('`stocks-api`.stocks',
-                ['amount' => $userStockAmount + $amount],
+            $this->connection->update('`stocks-api`.stocks', [
+                'amount' => $userStock['amount'] - abs($amount),
+                'total_price' => $userStock['total_price'] - $stock->getPrice() * abs($amount),
+                'avg_price' => ($userStock['total_price'] - $stock->getPrice() * abs($amount)) / (abs($userStock['amount'] - abs($amount)))
+                ],
                 ['owner_id' => $ownerId, 'symbol' => $stock->getSymbol()]
             );
         }
     }
 
-    public function updateStock($totalAmount, $stockId): void
+    public function updateStock($totalAmount, $stockId, $buyAmount, $sellAmount, StockModel $stock): void
     {
+        $userStock = $this->connection->createQueryBuilder()
+            ->select( '*')
+            ->from('stocks')
+            ->where('id = ?')
+            ->setParameter(0, $stockId)
+            ->fetchAssociative();
+
         if ($totalAmount == 0) {
             $this->connection->delete('`stocks-api`.stocks', ['id' => $stockId]);
         }
 
-        $this->connection->update('`stocks-api`.stocks',
-            ['amount' => $totalAmount],
-            ['id' => $stockId]
-        );
+        if($userStock['amount'] < 0) {
+            $this->connection->update('`stocks-api`.stocks', [
+                'amount' => $totalAmount,
+                'total_price' => $userStock['total_price'] - $stock->getPrice() * abs($buyAmount) + $stock->getPrice() * abs($sellAmount),
+                'avg_price' =>
+                    ($userStock['total_price'] - $stock->getPrice() * abs($buyAmount) +
+                        $stock->getPrice() * abs($sellAmount)) / (abs($totalAmount))
+            ],
+                ['id' => $stockId]
+            );
+        } else {
+            $this->connection->update('`stocks-api`.stocks', [
+                'amount' => $totalAmount,
+                'total_price' => $userStock['total_price'] + $stock->getPrice() * abs($buyAmount) - $stock->getPrice() * abs($sellAmount),
+                'avg_price' =>
+                    ($userStock['total_price'] + $stock->getPrice() * abs($buyAmount) -
+                        $stock->getPrice() * abs($sellAmount)) / (abs($totalAmount))
+            ],
+                ['id' => $stockId]
+            );
+        }
     }
 }

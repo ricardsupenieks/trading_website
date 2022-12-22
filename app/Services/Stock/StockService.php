@@ -24,9 +24,9 @@ class StockService
         return $this->apiStockRepository->getStock($stockSymbol);
     }
 
-    public function updateStock($amount, $stockId): void
+    public function updateStock($totalAmount, $userStockId, $buyAmount, $sellAmount, $stock): void
     {
-        $this->databaseStockRepository->updateStock($amount, $stockId);
+        $this->databaseStockRepository->updateStock($totalAmount, $userStockId, $buyAmount, $sellAmount, $stock);
     }
 
     public function getUserStock($stockId): UserStockModel
@@ -44,7 +44,7 @@ class StockService
         $this->databaseStockRepository->saveStock($stock,$ownerId,$amount);
     }
 
-    public function shortStock(StockModel $stock, $ownerId, $amount): void
+    public function shortStock($stock, $ownerId, $amount): void
     {
         $this->databaseStockRepository->borrowStock($stock,$ownerId,$amount);
     }

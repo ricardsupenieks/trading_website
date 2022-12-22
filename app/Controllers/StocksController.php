@@ -24,7 +24,9 @@ class StocksController
 
     public function search(): Template
     {
-        Session::store('searchTerm', $_GET['query']);
+        if(!empty($_GET['query'])) {
+            Session::store('searchTerm', $_GET['query']);
+        }
 
         $stockValidation = new StockValidation($_SESSION['searchTerm']);
 
@@ -43,11 +45,11 @@ class StocksController
     public function add(): Redirect
     {
         $stockService = new StockService();
-        $stock = $stockService->getStock($_SESSION['searchTerm']);
+        $searchedStock = $stockService->getStock($_SESSION['searchTerm']);
 
         $fundsService = new FundsService();
         $funds = $fundsService->getFunds();
-        $totalFunds = $funds - ((float)$stock->getPrice() * (int)$_POST['amount']);
+        $totalFunds = $funds - ((float)$searchedStock->getPrice() * (int)$_POST['amount']);
 
         $fundsValidation = new FundsValidation($totalFunds);
         if($fundsValidation->success() !== true) {
@@ -68,18 +70,20 @@ class StocksController
         }
 
         $userStock = new StockModel(
-            $stock->getSymbol(),
-            $stock->getName(),
-            $stock->getPrice(),
-            $stock->getHighPrice()
+            $searchedStock->getSymbol(),
+            $searchedStock->getName(),
+            $searchedStock->getPrice(),
+            $searchedStock->getHighPrice()
         );
 
         $stockService->saveStock($userStock, $_SESSION['user'], $_POST['amount']);
 
-        $profit = (float)$stock->getHighPrice() * (int)$_POST['amount'] - (float)$stock->getPrice() * (int)$_POST['amount'];
+        $profit =
+            (float)$searchedStock->getHighPrice() * (int)$_POST['amount'] -
+            (float)$searchedStock->getPrice() * (int)$_POST['amount'];
 
         $transactionService = new TransactionService();
-        $transactionService->buyTransaction($stock, $profit, $_POST['amount']);
+        $transactionService->buyTransaction($searchedStock, $profit, $_POST['amount']);
 
         return new Redirect('/');
     }
@@ -102,17 +106,15 @@ class StocksController
                 $userStockAmountValidation = new UserStockAmountValidation($_POST['amount'],$userStock->getAmount());
                 if (!$userStockAmountValidation->success()) {
                     $_POST['amount'] = $userStock->getAmount();
+                    $stockService->updateStock(0, $userStock->getId(),0,$_POST['amount'], $stock);
+                } else {
+                    $stockService->shortStock($stock, $_SESSION['user'], -$_POST['amount']);
                 }
-                $totalAmount = $userStock->getAmount() - $_POST['amount'];
-            } else {
-                $totalAmount = $userStock->getAmount() - $_POST['amount'];
             }
 
-            $stockService->updateStock($totalAmount, $userStock->getId());
             $fundsService->updateFunds($totalFunds);
 
-            $profit = (float)$stock->getPrice() * (int)$_POST['amount'] - $userStock->getPrice() * (int)$_POST['amount'];
-
+            $profit = (float)$stock->getPrice() * (int)$_POST['amount'] - $userStock->getAveragePrice() * (int)$_POST['amount'];
 
             $transactionService = new TransactionService();
             $transactionService->sellTransaction($stock, $profit, $_POST['amount']);

@@ -7,18 +7,20 @@ class UserStockModel
     private string $symbol;
     private string $name;
     private int $amount;
-    private float $price;
-    private int $ownerId;
+    private ?int $ownerId;
     private int $id;
+    private float$totalPrice;
+    private float $averagePrice;
 
-    public function __construct($id, $symbol, $name, $amount, $price, $ownerId = null)
+    public function __construct($id, $symbol, $name, $amount, $totalPrice, $averagePrice ,$ownerId = null)
     {
         $this->symbol = $symbol;
         $this->name = $name;
         $this->amount = $amount;
-        $this->price = $price;
         $this->ownerId = $ownerId;
         $this->id = $id;
+        $this->totalPrice = $totalPrice;
+        $this->averagePrice = $averagePrice;
     }
 
 
@@ -42,13 +44,18 @@ class UserStockModel
         return $this->amount;
     }
 
-    public function getPrice()
-    {
-        return $this->price;
-    }
-
     public function getOwnerId()
     {
         return $this->ownerId;
+    }
+
+    public function getTotalPrice(): float
+    {
+        return $this->totalPrice;
+    }
+
+    public function getAveragePrice(): float
+    {
+        return $this->averagePrice;
     }
 }
