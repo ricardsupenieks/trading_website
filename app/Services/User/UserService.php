@@ -2,7 +2,6 @@
 
 namespace App\Services\User;
 
-use App\Models\User\UserModel;
 use App\Repositories\User\DatabaseUserRepository;
 
 class UserService

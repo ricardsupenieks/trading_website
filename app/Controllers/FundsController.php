@@ -14,7 +14,7 @@ class FundsController
 
         $funds = $fundsService->getFunds();
 
-        $totalFunds = floatval($_POST['deposit']) + $funds - floatval($_POST['withdraw']);
+        $totalFunds = abs(floatval($_POST['deposit'])) + $funds - abs(floatval($_POST['withdraw']));
         $fundsValidation = new FundsValidation($totalFunds);
         if ($fundsValidation->success()) {
             $fundsService->updateFunds($totalFunds);
