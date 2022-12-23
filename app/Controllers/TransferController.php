@@ -86,7 +86,7 @@ class TransferController
             $stock->getHighPrice()
         );
 
-        $stockService->updateStock($amount, $userStock->getId(), 0, 1,$stock);
+        $stockService->updateStock($amount, $userStock->getId(), null, null,$stock);
 
         $stockService->saveStock($stock, $userId, $_POST['amount']);
 
