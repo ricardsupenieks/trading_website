@@ -25,7 +25,8 @@ use Twig\Environment;
 use Twig\Extension\DebugExtension;
 use Twig\Loader\FilesystemLoader;
 use function DI\create;
-
+//3 gifi, 3 dazadam vietam, jaieliek readme(kura php versija, kura mysql versija, uzstadisanas process)
+//export db shemu bez datiem, ka to importet(sql.dump fails)
 require '../vendor/autoload.php';
 
 Session::start();

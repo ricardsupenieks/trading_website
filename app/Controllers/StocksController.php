@@ -30,7 +30,7 @@ class StocksController
 
         $stockValidation = new StockValidation($_SESSION['searchTerm']);
 
-        if (!$stockValidation->success()) {
+        if ($stockValidation->success()) {
 
             return new Template('search.twig', ['failed' => true]);
         }
