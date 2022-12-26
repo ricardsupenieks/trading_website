@@ -14,13 +14,11 @@
 
 ## Used packages
 * [Carbon](https://carbon.nesbot.com/)
-* 
-* Twig by Twig: ^3.0,
-* Phpdotenv by Vlucas: "^5.5",
-*        "nikic/fast-route": "^1.3",
-*        "finnhub/client": "^1.1",
-*        "doctrine/dbal": "^3.5",
-*        "ext-json": "*",
-*        "php-di/php-di": "^6.4"
+* [Twig](https://twig.symfony.com/)
+* [Dotenv](https://packagist.org/packages/vlucas/phpdotenv)
+* [Fast route](https://packagist.org/packages/nikic/fast-route)
+* [Finnhub client](https://packagist.org/packages/finnhub/client)
+* [Dbal](https://packagist.org/packages/doctrine/dbal)
+* [PHP-DI](https://php-di.org/)
 
 ## Installation
