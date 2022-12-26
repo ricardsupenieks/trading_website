@@ -22,5 +22,9 @@
 * [PHP-DI](https://php-di.org/)
 
 ## Installation
-1. Clone this repository: git clone https://github.com/ricardsupenieks/trading_website.git
-2. Install composer: composer install
+1. Clone this repository:git clone https://github.com/ricardsupenieks/trading_website.git
+2. Install composer composer install
+3. Register on https://finnhub.io/ to get the API key
+3. Rename ".env.example" to ".env" and enter the correct information in the parenthesis
+
+
