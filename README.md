@@ -22,5 +22,5 @@
 * [PHP-DI](https://php-di.org/)
 
 ## Installation
-1. Clone this repository:git clone https://github.com/ricardsupenieks/trading_website.git
-2. Install composer composer install
+1. Clone this repository: git clone https://github.com/ricardsupenieks/trading_website.git
+2. Install composer: composer install
