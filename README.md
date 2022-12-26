@@ -24,4 +24,4 @@
 ## Installation
 1. Clone this repository:git clone https://github.com/ricardsupenieks/trading_website.git
 2. Install composer composer install
-
+https://github.com/ricardsupenieks/trading_website/blob/master/README.md
