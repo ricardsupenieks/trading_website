@@ -26,7 +26,6 @@
 2. Install composer composer install
 3. Recreate an account on https://finnhub.io/ to get the API key
 4. Rename ".env.example" to ".env" and enter the correct information in the parenthesis
-5. You can run the development website by typing in terminal:
-php -S localhost:8000
+5. You can run the development website by typing in terminal: php -S localhost:8000
 
 
