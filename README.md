@@ -22,11 +22,11 @@
 * [PHP-DI](https://php-di.org/)
 
 ## Installation
-1. Clone this repository:git clone https://github.com/ricardsupenieks/trading_website.git
-2. Install composer composer install
+1. Clone this repository
+2. Install composer
 3. Recreate an account on https://finnhub.io/ to get the API key
 4. Rename ".env.example" to ".env" and enter the correct information in the parenthesis
-5. Import the schema.sql
+5. Import the "schema.sql"
 6. You can run the development website by typing in terminal: php -S localhost:8000
 
 
